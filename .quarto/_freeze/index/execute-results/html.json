@@ -1,0 +1,15 @@
+{
+  "hash": "2444e36bbca50dabbd8b89838cfb6749",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"PROBIT e LOGIT - Aplicações em R\"\n---\n\n\n\n\nThis is a Quarto website.\n\nTo learn more about Quarto websites visit <https://quarto.org/docs/websites>.\n\n\n\n\n::: {.cell}\n\n:::",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
