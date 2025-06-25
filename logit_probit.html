@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-BR" xml:lang="pt-BR"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-BR" xml:lang="pt-BR">
 
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<head>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta charset="utf-8" />
+<meta name="generator" content="quarto-1.6.40" />
 
-<meta name="author" content="Marcus Antonio Cardoso Ramalho">
-<meta name="author" content="Claudia Regina da Costa de Souza">
-<meta name="author" content="Ben Hur Correia">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+
+<meta name="author" content="Marcus Antonio Cardoso Ramalho" />
+<meta name="author" content="Claudia Regina da Costa de Souza" />
+<meta name="author" content="Ben Hur Correia" />
 
 <title>LOGIT E PROBIT – ANÁLISE DISCRIMINANTE, PROBIT e LOGIT - Aplicações em R</title>
 <style>
@@ -59,23 +61,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 </style>
 
-
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-ddd961a2510921635943dfbbd19534c4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<!-- htmldependencies:E3FAD763 -->
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -134,32 +120,34 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 
-<body class="nav-fixed">
+<body>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="/index.html">
     <span class="navbar-title">ANÁLISE DISCRIMINANTE, PROBIT e LOGIT - Aplicações em R</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Procurar"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Alternar de navegação" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+  aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Alternar de navegação"
+  onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="/index.html"> 
 <span class="menu-text">Análise discriminante</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./logit_probit.html" aria-current="page"> 
+    <a class="nav-link" href="/logit_probit.html"> 
 <span class="menu-text">Logit e Probit</span></a>
   </li>  
 </ul>
@@ -174,76 +162,7 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Nesta página</h2>
-   
-  <ul>
-  <li><a href="#introdução" id="toc-introdução" class="nav-link active" data-scroll-target="#introdução">Introdução</a>
-  <ul class="collapse">
-  <li><a href="#variáveis-dependentes-limitadas" id="toc-variáveis-dependentes-limitadas" class="nav-link" data-scroll-target="#variáveis-dependentes-limitadas">Variáveis Dependentes Limitadas</a>
-  <ul class="collapse">
-  <li><a href="#por-que-não-usar-modelo-linear" id="toc-por-que-não-usar-modelo-linear" class="nav-link" data-scroll-target="#por-que-não-usar-modelo-linear">Por que não usar modelo linear?</a></li>
-  </ul></li>
-  <li><a href="#especificação-dos-modelos" id="toc-especificação-dos-modelos" class="nav-link" data-scroll-target="#especificação-dos-modelos">Especificação dos Modelos</a>
-  <ul class="collapse">
-  <li><a href="#modelo-logit" id="toc-modelo-logit" class="nav-link" data-scroll-target="#modelo-logit">Modelo Logit</a></li>
-  <li><a href="#modelo-probit" id="toc-modelo-probit" class="nav-link" data-scroll-target="#modelo-probit">Modelo Probit</a></li>
-  </ul></li>
-  </ul></li>
-  <li><a href="#exemplo-prático-participação-no-mercado-de-trabalho" id="toc-exemplo-prático-participação-no-mercado-de-trabalho" class="nav-link" data-scroll-target="#exemplo-prático-participação-no-mercado-de-trabalho">Exemplo Prático: Participação no Mercado de Trabalho</a>
-  <ul class="collapse">
-  <li><a href="#descrição-dos-dados" id="toc-descrição-dos-dados" class="nav-link" data-scroll-target="#descrição-dos-dados">Descrição dos Dados</a>
-  <ul class="collapse">
-  <li><a href="#variáveis-explicativas" id="toc-variáveis-explicativas" class="nav-link" data-scroll-target="#variáveis-explicativas">Variáveis Explicativas:</a></li>
-  </ul></li>
-  <li><a href="#modelo-teórico" id="toc-modelo-teórico" class="nav-link" data-scroll-target="#modelo-teórico">Modelo Teórico</a></li>
-  <li><a href="#análise-exploratória-dos-dados" id="toc-análise-exploratória-dos-dados" class="nav-link" data-scroll-target="#análise-exploratória-dos-dados">Análise Exploratória dos Dados</a>
-  <ul class="collapse">
-  <li><a href="#interpretação-da-análise-exploratória" id="toc-interpretação-da-análise-exploratória" class="nav-link" data-scroll-target="#interpretação-da-análise-exploratória">Interpretação da Análise Exploratória</a></li>
-  <li><a href="#análise-dos-gráficos-exploratórios" id="toc-análise-dos-gráficos-exploratórios" class="nav-link" data-scroll-target="#análise-dos-gráficos-exploratórios">Análise dos Gráficos Exploratórios</a></li>
-  </ul></li>
-  <li><a href="#estimação-dos-modelos" id="toc-estimação-dos-modelos" class="nav-link" data-scroll-target="#estimação-dos-modelos">Estimação dos Modelos</a>
-  <ul class="collapse">
-  <li><a href="#modelo-logit-1" id="toc-modelo-logit-1" class="nav-link" data-scroll-target="#modelo-logit-1">Modelo Logit</a></li>
-  <li><a href="#interpretação-do-modelo-logit" id="toc-interpretação-do-modelo-logit" class="nav-link" data-scroll-target="#interpretação-do-modelo-logit">Interpretação do Modelo Logit</a></li>
-  <li><a href="#modelo-probit-1" id="toc-modelo-probit-1" class="nav-link" data-scroll-target="#modelo-probit-1">Modelo Probit</a></li>
-  <li><a href="#interpretação-do-modelo-probit" id="toc-interpretação-do-modelo-probit" class="nav-link" data-scroll-target="#interpretação-do-modelo-probit">Interpretação do Modelo Probit</a></li>
-  </ul></li>
-  <li><a href="#efeitos-marginais" id="toc-efeitos-marginais" class="nav-link" data-scroll-target="#efeitos-marginais">Efeitos Marginais</a>
-  <ul class="collapse">
-  <li><a href="#fórmulas-teóricas" id="toc-fórmulas-teóricas" class="nav-link" data-scroll-target="#fórmulas-teóricas">Fórmulas Teóricas</a></li>
-  <li><a href="#interpretação-dos-efeitos-marginais" id="toc-interpretação-dos-efeitos-marginais" class="nav-link" data-scroll-target="#interpretação-dos-efeitos-marginais">Interpretação dos Efeitos Marginais</a></li>
-  </ul></li>
-  <li><a href="#qualidade-da-previsão" id="toc-qualidade-da-previsão" class="nav-link" data-scroll-target="#qualidade-da-previsão">Qualidade da Previsão</a>
-  <ul class="collapse">
-  <li><a href="#análise-da-qualidade-preditiva" id="toc-análise-da-qualidade-preditiva" class="nav-link" data-scroll-target="#análise-da-qualidade-preditiva">Análise da Qualidade Preditiva</a></li>
-  </ul></li>
-  <li><a href="#pseudo-r²" id="toc-pseudo-r²" class="nav-link" data-scroll-target="#pseudo-r²">Pseudo-R²</a>
-  <ul class="collapse">
-  <li><a href="#interpretação-do-pseudo-r²" id="toc-interpretação-do-pseudo-r²" class="nav-link" data-scroll-target="#interpretação-do-pseudo-r²">Interpretação do Pseudo-R²</a></li>
-  </ul></li>
-  <li><a href="#razão-de-chances-odds-ratio" id="toc-razão-de-chances-odds-ratio" class="nav-link" data-scroll-target="#razão-de-chances-odds-ratio">Razão de Chances (Odds Ratio)</a>
-  <ul class="collapse">
-  <li><a href="#interpretação-da-razão-de-chances" id="toc-interpretação-da-razão-de-chances" class="nav-link" data-scroll-target="#interpretação-da-razão-de-chances">Interpretação da Razão de Chances</a></li>
-  <li><a href="#interpretação-da-razão-de-chances-1" id="toc-interpretação-da-razão-de-chances-1" class="nav-link" data-scroll-target="#interpretação-da-razão-de-chances-1">Interpretação da Razão de Chances:</a></li>
-  </ul></li>
-  <li><a href="#comparação-visual-dos-modelos" id="toc-comparação-visual-dos-modelos" class="nav-link" data-scroll-target="#comparação-visual-dos-modelos">Comparação Visual dos Modelos</a>
-  <ul class="collapse">
-  <li><a href="#análise-comparativa-das-funções" id="toc-análise-comparativa-das-funções" class="nav-link" data-scroll-target="#análise-comparativa-das-funções">Análise Comparativa das Funções</a></li>
-  </ul></li>
-  <li><a href="#resumo-comparativo-dos-modelos" id="toc-resumo-comparativo-dos-modelos" class="nav-link" data-scroll-target="#resumo-comparativo-dos-modelos">Resumo Comparativo dos Modelos</a></li>
-  <li><a href="#conclusões" id="toc-conclusões" class="nav-link" data-scroll-target="#conclusões">Conclusões</a>
-  <ul class="collapse">
-  <li><a href="#principais-achados" id="toc-principais-achados" class="nav-link" data-scroll-target="#principais-achados">Principais Achados</a></li>
-  <li><a href="#escolha-entre-modelos" id="toc-escolha-entre-modelos" class="nav-link" data-scroll-target="#escolha-entre-modelos">Escolha entre Modelos</a></li>
-  <li><a href="#recomendações-práticas" id="toc-recomendações-práticas" class="nav-link" data-scroll-target="#recomendações-práticas">Recomendações Práticas</a></li>
-  <li><a href="#implicações-para-política-pública" id="toc-implicações-para-política-pública" class="nav-link" data-scroll-target="#implicações-para-política-pública">Implicações para Política Pública</a></li>
-  <li><a href="#limitações-do-estudo" id="toc-limitações-do-estudo" class="nav-link" data-scroll-target="#limitações-do-estudo">Limitações do Estudo</a></li>
-  <li><a href="#próximos-passos" id="toc-próximos-passos" class="nav-link" data-scroll-target="#próximos-passos">Próximos Passos</a></li>
-  </ul></li>
-  </ul></li>
-  </ul>
-<div class="quarto-alternate-formats"><h2>Outros formatos</h2><ul><li><a href="logit_probit.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+        <div id="quarto-toc-target"></div>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -295,30 +214,99 @@ window.Quarto = {
 
 </header>
 
-
+<nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Nesta página</h2>
+   
+  <ul>
+  <li><a href="#introdução" id="toc-introdução">Introdução</a>
+  <ul>
+  <li><a href="#variáveis-dependentes-limitadas" id="toc-variáveis-dependentes-limitadas">Variáveis Dependentes Limitadas</a>
+  <ul>
+  <li><a href="#por-que-não-usar-modelo-linear" id="toc-por-que-não-usar-modelo-linear">Por que não usar modelo linear?</a></li>
+  </ul></li>
+  <li><a href="#especificação-dos-modelos" id="toc-especificação-dos-modelos">Especificação dos Modelos</a>
+  <ul>
+  <li><a href="#modelo-logit" id="toc-modelo-logit">Modelo Logit</a></li>
+  <li><a href="#modelo-probit" id="toc-modelo-probit">Modelo Probit</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#exemplo-prático-participação-no-mercado-de-trabalho" id="toc-exemplo-prático-participação-no-mercado-de-trabalho">Exemplo Prático: Participação no Mercado de Trabalho</a>
+  <ul>
+  <li><a href="#descrição-dos-dados" id="toc-descrição-dos-dados">Descrição dos Dados</a>
+  <ul>
+  <li><a href="#variáveis-explicativas" id="toc-variáveis-explicativas">Variáveis Explicativas:</a></li>
+  </ul></li>
+  <li><a href="#modelo-teórico" id="toc-modelo-teórico">Modelo Teórico</a></li>
+  <li><a href="#análise-exploratória-dos-dados" id="toc-análise-exploratória-dos-dados">Análise Exploratória dos Dados</a>
+  <ul>
+  <li><a href="#interpretação-da-análise-exploratória" id="toc-interpretação-da-análise-exploratória">Interpretação da Análise Exploratória</a></li>
+  <li><a href="#análise-dos-gráficos-exploratórios" id="toc-análise-dos-gráficos-exploratórios">Análise dos Gráficos Exploratórios</a></li>
+  </ul></li>
+  <li><a href="#estimação-dos-modelos" id="toc-estimação-dos-modelos">Estimação dos Modelos</a>
+  <ul>
+  <li><a href="#modelo-logit-1" id="toc-modelo-logit-1">Modelo Logit</a></li>
+  <li><a href="#interpretação-do-modelo-logit" id="toc-interpretação-do-modelo-logit">Interpretação do Modelo Logit</a></li>
+  <li><a href="#modelo-probit-1" id="toc-modelo-probit-1">Modelo Probit</a></li>
+  <li><a href="#interpretação-do-modelo-probit" id="toc-interpretação-do-modelo-probit">Interpretação do Modelo Probit</a></li>
+  </ul></li>
+  <li><a href="#efeitos-marginais" id="toc-efeitos-marginais">Efeitos Marginais</a>
+  <ul>
+  <li><a href="#fórmulas-teóricas" id="toc-fórmulas-teóricas">Fórmulas Teóricas</a></li>
+  <li><a href="#interpretação-dos-efeitos-marginais" id="toc-interpretação-dos-efeitos-marginais">Interpretação dos Efeitos Marginais</a></li>
+  </ul></li>
+  <li><a href="#qualidade-da-previsão" id="toc-qualidade-da-previsão">Qualidade da Previsão</a>
+  <ul>
+  <li><a href="#análise-da-qualidade-preditiva" id="toc-análise-da-qualidade-preditiva">Análise da Qualidade Preditiva</a></li>
+  </ul></li>
+  <li><a href="#pseudo-r²" id="toc-pseudo-r²">Pseudo-R²</a>
+  <ul>
+  <li><a href="#interpretação-do-pseudo-r²" id="toc-interpretação-do-pseudo-r²">Interpretação do Pseudo-R²</a></li>
+  </ul></li>
+  <li><a href="#razão-de-chances-odds-ratio" id="toc-razão-de-chances-odds-ratio">Razão de Chances (Odds Ratio)</a>
+  <ul>
+  <li><a href="#interpretação-da-razão-de-chances" id="toc-interpretação-da-razão-de-chances">Interpretação da Razão de Chances</a></li>
+  <li><a href="#interpretação-da-razão-de-chances-1" id="toc-interpretação-da-razão-de-chances-1">Interpretação da Razão de Chances:</a></li>
+  </ul></li>
+  <li><a href="#comparação-visual-dos-modelos" id="toc-comparação-visual-dos-modelos">Comparação Visual dos Modelos</a>
+  <ul>
+  <li><a href="#análise-comparativa-das-funções" id="toc-análise-comparativa-das-funções">Análise Comparativa das Funções</a></li>
+  </ul></li>
+  <li><a href="#resumo-comparativo-dos-modelos" id="toc-resumo-comparativo-dos-modelos">Resumo Comparativo dos Modelos</a></li>
+  <li><a href="#conclusões" id="toc-conclusões">Conclusões</a>
+  <ul>
+  <li><a href="#principais-achados" id="toc-principais-achados">Principais Achados</a></li>
+  <li><a href="#escolha-entre-modelos" id="toc-escolha-entre-modelos">Escolha entre Modelos</a></li>
+  <li><a href="#recomendações-práticas" id="toc-recomendações-práticas">Recomendações Práticas</a></li>
+  <li><a href="#implicações-para-política-pública" id="toc-implicações-para-política-pública">Implicações para Política Pública</a></li>
+  <li><a href="#limitações-do-estudo" id="toc-limitações-do-estudo">Limitações do Estudo</a></li>
+  <li><a href="#próximos-passos" id="toc-próximos-passos">Próximos Passos</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
 <section id="introdução" class="level1">
 <h1>Introdução</h1>
 <section id="variáveis-dependentes-limitadas" class="level2">
-<h2 class="anchored" data-anchor-id="variáveis-dependentes-limitadas">Variáveis Dependentes Limitadas</h2>
+<h2>Variáveis Dependentes Limitadas</h2>
 <p>Os modelos Logit e Probit (abreviação de regressão logística e probabilística) nos auxiliam na inferência de probabilidade de ocorrência de eventos onde nossa variável dependente é binária (Y ocorre ou não ocorre), e nosso objetivo é compreender como outras variáveis influenciam a ocorrência ou não desses eventos.</p>
 <section id="por-que-não-usar-modelo-linear" class="level3">
-<h3 class="anchored" data-anchor-id="por-que-não-usar-modelo-linear">Por que não usar modelo linear?</h3>
+<h3>Por que não usar modelo linear?</h3>
 <p>Em uma regressão linear, <span class="math inline">\(P(Y=1|x)\)</span> é dado por uma especificação linear dos regressores, o que pode resultar em valores menores que 0 ou maiores que 1, que não fazem sentido com a interpretação probabilística dos parâmetros.</p>
 <p>Os modelos não lineares permitem que a média condicional de Y dado X seja expressa pela probabilidade de Y acontecer dado X:</p>
 <p><span class="math display">\[E(Y|X) = P(Y=1|X)\]</span></p>
 </section>
 </section>
 <section id="especificação-dos-modelos" class="level2">
-<h2 class="anchored" data-anchor-id="especificação-dos-modelos">Especificação dos Modelos</h2>
+<h2>Especificação dos Modelos</h2>
 <section id="modelo-logit" class="level3">
-<h3 class="anchored" data-anchor-id="modelo-logit">Modelo Logit</h3>
+<h3>Modelo Logit</h3>
 <p>A função de distribuição logística é dada por:</p>
-<p><span class="math display">\[F(X'\beta) = \frac{e^{X'\beta}}{1 + e^{X'\beta}} = \frac{1}{1 + e^{-X'\beta}}\]</span></p>
+<p><span class="math display">\[F(X&#39;\beta) = \frac{e^{X&#39;\beta}}{1 + e^{X&#39;\beta}} = \frac{1}{1 + e^{-X&#39;\beta}}\]</span></p>
 </section>
 <section id="modelo-probit" class="level3">
-<h3 class="anchored" data-anchor-id="modelo-probit">Modelo Probit</h3>
+<h3>Modelo Probit</h3>
 <p>A função de distribuição normal padrão é dada por:</p>
-<p><span class="math display">\[F(X'\beta) = \Phi(X'\beta) = \int_{-\infty}^{X'\beta} \phi(z)dz\]</span></p>
+<p><span class="math display">\[F(X&#39;\beta) = \Phi(X&#39;\beta) = \int_{-\infty}^{X&#39;\beta} \phi(z)dz\]</span></p>
 <p>onde <span class="math inline">\(\phi(z) = \frac{1}{\sqrt{2\pi}}e^{-\frac{z^2}{2}}\)</span> é a densidade da normal padrão.</p>
 </section>
 </section>
@@ -326,14 +314,14 @@ window.Quarto = {
 <section id="exemplo-prático-participação-no-mercado-de-trabalho" class="level1">
 <h1>Exemplo Prático: Participação no Mercado de Trabalho</h1>
 <section id="descrição-dos-dados" class="level2">
-<h2 class="anchored" data-anchor-id="descrição-dos-dados">Descrição dos Dados</h2>
+<h2>Descrição dos Dados</h2>
 <p>Consideramos <code>inlf</code> (“no mercado de trabalho”) como uma variável binária que indica a participação no mercado de trabalho por uma mulher casada durante 1975:</p>
 <ul>
 <li><code>inlf = 1</code> se a mulher relata ter trabalhado por um salário fora de casa</li>
 <li><code>inlf = 0</code> caso contrário</li>
 </ul>
 <section id="variáveis-explicativas" class="level3">
-<h3 class="anchored" data-anchor-id="variáveis-explicativas">Variáveis Explicativas:</h3>
+<h3>Variáveis Explicativas:</h3>
 <ul>
 <li><code>nwifeinc</code>: outras fontes de renda (milhares de dólares)</li>
 <li><code>educ</code>: anos de educação</li>
@@ -346,12 +334,12 @@ window.Quarto = {
 </section>
 </section>
 <section id="modelo-teórico" class="level2">
-<h2 class="anchored" data-anchor-id="modelo-teórico">Modelo Teórico</h2>
+<h2>Modelo Teórico</h2>
 <p><span class="math display">\[inlf = \beta_0 - \beta_1 \cdot nwifeinc + \beta_2 \cdot educ + \beta_3 \cdot exper - \beta_4 \cdot exper^2 - \beta_5 \cdot age - \beta_6 \cdot kidslt6 + \beta_7 \cdot kidsge6\]</span></p>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">999</span>) <span class="co"># desliga a notação científica</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">999</span>) <span class="co"># desliga a notação científica</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Pacotes necessários</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)    <span class="co"># análise de dados</span></span>
@@ -361,17 +349,17 @@ window.Quarto = {
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)    <span class="co"># múltiplos gráficos</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)        <span class="co"># tabelas</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)      <span class="co"># gráficos</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)       <span class="co"># gráficos interativos</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)       <span class="co"># gráficos interativos</span></span></code></pre></div>
 </details>
 </div>
 </section>
 <section id="análise-exploratória-dos-dados" class="level2">
-<h2 class="anchored" data-anchor-id="análise-exploratória-dos-dados">Análise Exploratória dos Dados</h2>
+<h2>Análise Exploratória dos Dados</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar estrutura dos dados</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(mroz)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar estrutura dos dados</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(mroz)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 753
@@ -401,8 +389,8 @@ $ expersq  &lt;int&gt; 196, 25, 225, 36, 49, 1089, 121, 1225, 576, 441, 225, 196
 </div>
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estatísticas descritivas</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mroz[<span class="fu">c</span>(<span class="st">"inlf"</span>, <span class="st">"nwifeinc"</span>, <span class="st">"educ"</span>, <span class="st">"exper"</span>, <span class="st">"age"</span>, <span class="st">"kidslt6"</span>, <span class="st">"kidsge6"</span>)])</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estatísticas descritivas</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mroz[<span class="fu">c</span>(<span class="st">&quot;inlf&quot;</span>, <span class="st">&quot;nwifeinc&quot;</span>, <span class="st">&quot;educ&quot;</span>, <span class="st">&quot;exper&quot;</span>, <span class="st">&quot;age&quot;</span>, <span class="st">&quot;kidslt6&quot;</span>, <span class="st">&quot;kidsge6&quot;</span>)])</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>      inlf           nwifeinc             educ           exper      
@@ -422,16 +410,16 @@ $ expersq  &lt;int&gt; 196, 25, 225, 36, 49, 1089, 121, 1225, 576, 441, 225, 196
 </div>
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Proporção de mulheres no mercado de trabalho</span></span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Proporção de mulheres no mercado de trabalho</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>prop_trabalho <span class="ot">&lt;-</span> <span class="fu">mean</span>(mroz<span class="sc">$</span>inlf)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Proporção de mulheres no mercado de trabalho:"</span>, <span class="fu">round</span>(prop_trabalho, <span class="dv">3</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Proporção de mulheres no mercado de trabalho:&quot;</span>, <span class="fu">round</span>(prop_trabalho, <span class="dv">3</span>))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Proporção de mulheres no mercado de trabalho: 0.568</code></pre>
 </div>
 </div>
 <section id="interpretação-da-análise-exploratória" class="level3">
-<h3 class="anchored" data-anchor-id="interpretação-da-análise-exploratória">Interpretação da Análise Exploratória</h3>
+<h3>Interpretação da Análise Exploratória</h3>
 <p>Os dados revelam informações importantes sobre o perfil das 753 mulheres casadas na amostra:</p>
 <ul>
 <li><strong>Participação no mercado de trabalho</strong>: 56,8% das mulheres trabalhavam fora de casa em 1975</li>
@@ -443,58 +431,58 @@ $ expersq  &lt;int&gt; 196, 25, 225, 36, 49, 1089, 121, 1225, 576, 441, 225, 196
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de barras para variável dependente</span></span>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de barras para variável dependente</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mroz, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(inlf))) <span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="fu">c</span>(<span class="st">"coral"</span>, <span class="st">"lightblue"</span>), <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição da Participação no Mercado de Trabalho"</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Participação (0 = Não, 1 = Sim)"</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequência"</span>) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="fu">c</span>(<span class="st">&quot;coral&quot;</span>, <span class="st">&quot;lightblue&quot;</span>), <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribuição da Participação no Mercado de Trabalho&quot;</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Participação (0 = Não, 1 = Sim)&quot;</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Frequência&quot;</span>) <span class="sc">+</span></span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Boxplots das variáveis contínuas por grupo</span></span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> mroz <span class="sc">%&gt;%</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(inlf, nwifeinc, educ, exper, age) <span class="sc">%&gt;%</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>inlf, <span class="at">names_to =</span> <span class="st">"variavel"</span>, <span class="at">values_to =</span> <span class="st">"valor"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>inlf, <span class="at">names_to =</span> <span class="st">&quot;variavel&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;valor&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(inlf), <span class="at">y =</span> valor, <span class="at">fill =</span> <span class="fu">factor</span>(inlf))) <span class="sc">+</span></span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variavel, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição das Variáveis por Participação no Mercado"</span>,</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Participação (0 = Não, 1 = Sim)"</span>,</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Valor"</span>,</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Participação"</span>) <span class="sc">+</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variavel, <span class="at">scales =</span> <span class="st">&quot;free_y&quot;</span>) <span class="sc">+</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribuição das Variáveis por Participação no Mercado&quot;</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Participação (0 = Não, 1 = Sim)&quot;</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Valor&quot;</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">&quot;Participação&quot;</span>) <span class="sc">+</span></span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>)</span>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Histograma dos filhos</span></span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mroz, <span class="fu">aes</span>(<span class="at">x =</span> kidslt6, <span class="at">fill =</span> <span class="fu">factor</span>(inlf))) <span class="sc">+</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">bins =</span> <span class="dv">5</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição de Filhos &lt; 6 anos"</span>,</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Número de filhos &lt; 6 anos"</span>,</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequência"</span>,</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Participação"</span>) <span class="sc">+</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>, <span class="at">bins =</span> <span class="dv">5</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribuição de Filhos &lt; 6 anos&quot;</span>,</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Número de filhos &lt; 6 anos&quot;</span>,</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Frequência&quot;</span>,</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">&quot;Participação&quot;</span>) <span class="sc">+</span></span>
 <span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
 <span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mroz, <span class="fu">aes</span>(<span class="at">x =</span> kidsge6, <span class="at">fill =</span> <span class="fu">factor</span>(inlf))) <span class="sc">+</span></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">bins =</span> <span class="dv">8</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição de Filhos 6-18 anos"</span>,</span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Número de filhos 6-18 anos"</span>,</span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequência"</span>,</span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Participação"</span>) <span class="sc">+</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>, <span class="at">bins =</span> <span class="dv">8</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribuição de Filhos 6-18 anos&quot;</span>,</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Número de filhos 6-18 anos&quot;</span>,</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Frequência&quot;</span>,</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">&quot;Participação&quot;</span>) <span class="sc">+</span></span>
 <span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
 <span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(p1, p2, p3, p4, <span class="at">layout_matrix =</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>), <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>)))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(p1, p2, p3, p4, <span class="at">layout_matrix =</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>), <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>)))</span></code></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
-<figure class="figure">
-<p><img src="logit_probit_files/figure-html/plots-exploratory-1.png" class="img-fluid figure-img" width="1152"></p>
+<figure>
+<p><img src="logit_probit_files/figure-html/plots-exploratory-1.png" class="img-fluid" width="1152" /></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
 <section id="análise-dos-gráficos-exploratórios" class="level3">
-<h3 class="anchored" data-anchor-id="análise-dos-gráficos-exploratórios">Análise dos Gráficos Exploratórios</h3>
+<h3>Análise dos Gráficos Exploratórios</h3>
 <p>Os gráficos revelam padrões importantes:</p>
 <ol type="1">
 <li><p><strong>Distribuição equilibrada</strong>: Há uma distribuição relativamente equilibrada entre mulheres que trabalham (57%) e que não trabalham (43%)</p></li>
@@ -509,23 +497,23 @@ $ expersq  &lt;int&gt; 196, 25, 225, 36, 49, 1089, 121, 1225, 576, 441, 225, 196
 </section>
 </section>
 <section id="estimação-dos-modelos" class="level2">
-<h2 class="anchored" data-anchor-id="estimação-dos-modelos">Estimação dos Modelos</h2>
+<h2>Estimação dos Modelos</h2>
 <section id="modelo-logit-1" class="level3">
-<h3 class="anchored" data-anchor-id="modelo-logit-1">Modelo Logit</h3>
+<h3>Modelo Logit</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mlogit <span class="ot">&lt;-</span> <span class="fu">glm</span>(inlf <span class="sc">~</span> nwifeinc <span class="sc">+</span> educ <span class="sc">+</span> exper <span class="sc">+</span> expersq <span class="sc">+</span> age <span class="sc">+</span> kidslt6 <span class="sc">+</span> kidsge6,</span>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mlogit <span class="ot">&lt;-</span> <span class="fu">glm</span>(inlf <span class="sc">~</span> nwifeinc <span class="sc">+</span> educ <span class="sc">+</span> exper <span class="sc">+</span> expersq <span class="sc">+</span> age <span class="sc">+</span> kidslt6 <span class="sc">+</span> kidsge6,</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> mroz,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">&quot;logit&quot;</span>))</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mlogit)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mlogit)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
 glm(formula = inlf ~ nwifeinc + educ + exper + expersq + age + 
-    kidslt6 + kidsge6, family = binomial(link = "logit"), data = mroz)
+    kidslt6 + kidsge6, family = binomial(link = &quot;logit&quot;), data = mroz)
 
 Coefficients:
              Estimate Std. Error z value         Pr(&gt;|z|)    
@@ -538,7 +526,7 @@ age         -0.088024   0.014573  -6.040 0.00000000153845 ***
 kidslt6     -1.443354   0.203583  -7.090 0.00000000000134 ***
 kidsge6      0.060112   0.074789   0.804          0.42154    
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 (Dispersion parameter for binomial family taken to be 1)
 
@@ -551,32 +539,32 @@ Number of Fisher Scoring iterations: 4</code></pre>
 </div>
 </section>
 <section id="interpretação-do-modelo-logit" class="level3">
-<h3 class="anchored" data-anchor-id="interpretação-do-modelo-logit">Interpretação do Modelo Logit</h3>
+<h3>Interpretação do Modelo Logit</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela formatada dos resultados do Logit</span></span>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela formatada dos resultados do Logit</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>logit_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  Variável <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"(Intercepto)"</span>, <span class="st">"nwifeinc"</span>, <span class="st">"educ"</span>, <span class="st">"exper"</span>, <span class="st">"expersq"</span>, <span class="st">"age"</span>, <span class="st">"kidslt6"</span>, <span class="st">"kidsge6"</span>),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  Variável <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;(Intercepto)&quot;</span>, <span class="st">&quot;nwifeinc&quot;</span>, <span class="st">&quot;educ&quot;</span>, <span class="st">&quot;exper&quot;</span>, <span class="st">&quot;expersq&quot;</span>, <span class="st">&quot;age&quot;</span>, <span class="st">&quot;kidslt6&quot;</span>, <span class="st">&quot;kidsge6&quot;</span>),</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Coeficiente =</span> <span class="fu">c</span>(<span class="fl">0.425452</span>, <span class="sc">-</span><span class="fl">0.021345</span>, <span class="fl">0.221170</span>, <span class="fl">0.205870</span>, <span class="sc">-</span><span class="fl">0.003154</span>, <span class="sc">-</span><span class="fl">0.088024</span>, <span class="sc">-</span><span class="fl">1.443354</span>, <span class="fl">0.060112</span>),</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Erro Padrão</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.860365</span>, <span class="fl">0.008421</span>, <span class="fl">0.043439</span>, <span class="fl">0.032057</span>, <span class="fl">0.001016</span>, <span class="fl">0.014573</span>, <span class="fl">0.203583</span>, <span class="fl">0.074789</span>),</span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Valor z</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.495</span>, <span class="sc">-</span><span class="fl">2.535</span>, <span class="fl">5.091</span>, <span class="fl">6.422</span>, <span class="sc">-</span><span class="fl">3.104</span>, <span class="sc">-</span><span class="fl">6.040</span>, <span class="sc">-</span><span class="fl">7.090</span>, <span class="fl">0.804</span>),</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">p-valor</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.621</span>, <span class="fl">0.011</span>, <span class="st">"&lt;0.001"</span>, <span class="st">"&lt;0.001"</span>, <span class="fl">0.002</span>, <span class="st">"&lt;0.001"</span>, <span class="st">"&lt;0.001"</span>, <span class="fl">0.422</span>),</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  Significância <span class="ot">=</span> <span class="fu">c</span>(<span class="st">""</span>, <span class="st">"*"</span>, <span class="st">"***"</span>, <span class="st">"***"</span>, <span class="st">"**"</span>, <span class="st">"***"</span>, <span class="st">"***"</span>, <span class="st">""</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">p-valor</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.621</span>, <span class="fl">0.011</span>, <span class="st">&quot;&lt;0.001&quot;</span>, <span class="st">&quot;&lt;0.001&quot;</span>, <span class="fl">0.002</span>, <span class="st">&quot;&lt;0.001&quot;</span>, <span class="st">&quot;&lt;0.001&quot;</span>, <span class="fl">0.422</span>),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  Significância <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;&quot;</span>, <span class="st">&quot;*&quot;</span>, <span class="st">&quot;***&quot;</span>, <span class="st">&quot;***&quot;</span>, <span class="st">&quot;**&quot;</span>, <span class="st">&quot;***&quot;</span>, <span class="st">&quot;***&quot;</span>, <span class="st">&quot;&quot;</span>)</span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(logit_results, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Resultados do Modelo Logit"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(logit_results, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">&quot;Resultados do Modelo Logit&quot;</span>)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="caption-top">
 <caption>Resultados do Modelo Logit</caption>
 <colgroup>
-<col style="width: 19%">
-<col style="width: 17%">
-<col style="width: 17%">
-<col style="width: 11%">
-<col style="width: 11%">
-<col style="width: 20%">
+<col style="width: 19%" />
+<col style="width: 17%" />
+<col style="width: 17%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 20%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -665,21 +653,21 @@ Number of Fisher Scoring iterations: 4</code></pre>
 </ul>
 </section>
 <section id="modelo-probit-1" class="level3">
-<h3 class="anchored" data-anchor-id="modelo-probit-1">Modelo Probit</h3>
+<h3>Modelo Probit</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mprobit <span class="ot">&lt;-</span> <span class="fu">glm</span>(inlf <span class="sc">~</span> nwifeinc <span class="sc">+</span> educ <span class="sc">+</span> exper <span class="sc">+</span> expersq <span class="sc">+</span> age <span class="sc">+</span> kidslt6 <span class="sc">+</span> kidsge6,</span>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mprobit <span class="ot">&lt;-</span> <span class="fu">glm</span>(inlf <span class="sc">~</span> nwifeinc <span class="sc">+</span> educ <span class="sc">+</span> exper <span class="sc">+</span> expersq <span class="sc">+</span> age <span class="sc">+</span> kidslt6 <span class="sc">+</span> kidsge6,</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> mroz,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"probit"</span>))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">&quot;probit&quot;</span>))</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mprobit)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mprobit)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
 glm(formula = inlf ~ nwifeinc + educ + exper + expersq + age + 
-    kidslt6 + kidsge6, family = binomial(link = "probit"), data = mroz)
+    kidslt6 + kidsge6, family = binomial(link = &quot;probit&quot;), data = mroz)
 
 Coefficients:
               Estimate Std. Error z value          Pr(&gt;|z|)    
@@ -692,7 +680,7 @@ age         -0.0528524  0.0084624  -6.246 0.000000000422204 ***
 kidslt6     -0.8683247  0.1183773  -7.335 0.000000000000221 ***
 kidsge6      0.0360056  0.0440303   0.818           0.41350    
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 (Dispersion parameter for binomial family taken to be 1)
 
@@ -705,32 +693,32 @@ Number of Fisher Scoring iterations: 4</code></pre>
 </div>
 </section>
 <section id="interpretação-do-modelo-probit" class="level3">
-<h3 class="anchored" data-anchor-id="interpretação-do-modelo-probit">Interpretação do Modelo Probit</h3>
+<h3>Interpretação do Modelo Probit</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela formatada dos resultados do Probit</span></span>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela formatada dos resultados do Probit</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>probit_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  Variável <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"(Intercepto)"</span>, <span class="st">"nwifeinc"</span>, <span class="st">"educ"</span>, <span class="st">"exper"</span>, <span class="st">"expersq"</span>, <span class="st">"age"</span>, <span class="st">"kidslt6"</span>, <span class="st">"kidsge6"</span>),</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  Variável <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;(Intercepto)&quot;</span>, <span class="st">&quot;nwifeinc&quot;</span>, <span class="st">&quot;educ&quot;</span>, <span class="st">&quot;exper&quot;</span>, <span class="st">&quot;expersq&quot;</span>, <span class="st">&quot;age&quot;</span>, <span class="st">&quot;kidslt6&quot;</span>, <span class="st">&quot;kidsge6&quot;</span>),</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Coeficiente =</span> <span class="fu">c</span>(<span class="fl">0.2700736</span>, <span class="sc">-</span><span class="fl">0.0120236</span>, <span class="fl">0.1309040</span>, <span class="fl">0.1233472</span>, <span class="sc">-</span><span class="fl">0.0018871</span>, <span class="sc">-</span><span class="fl">0.0528524</span>, <span class="sc">-</span><span class="fl">0.8683247</span>, <span class="fl">0.0360056</span>),</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Erro Padrão</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.5080782</span>, <span class="fl">0.0049392</span>, <span class="fl">0.0253987</span>, <span class="fl">0.0187587</span>, <span class="fl">0.0005999</span>, <span class="fl">0.0084624</span>, <span class="fl">0.1183773</span>, <span class="fl">0.0440303</span>),</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Valor z</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.532</span>, <span class="sc">-</span><span class="fl">2.434</span>, <span class="fl">5.154</span>, <span class="fl">6.575</span>, <span class="sc">-</span><span class="fl">3.145</span>, <span class="sc">-</span><span class="fl">6.246</span>, <span class="sc">-</span><span class="fl">7.335</span>, <span class="fl">0.818</span>),</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">p-valor</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.595</span>, <span class="fl">0.015</span>, <span class="st">"&lt;0.001"</span>, <span class="st">"&lt;0.001"</span>, <span class="fl">0.002</span>, <span class="st">"&lt;0.001"</span>, <span class="st">"&lt;0.001"</span>, <span class="fl">0.414</span>),</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  Significância <span class="ot">=</span> <span class="fu">c</span>(<span class="st">""</span>, <span class="st">"*"</span>, <span class="st">"***"</span>, <span class="st">"***"</span>, <span class="st">"**"</span>, <span class="st">"***"</span>, <span class="st">"***"</span>, <span class="st">""</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">p-valor</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.595</span>, <span class="fl">0.015</span>, <span class="st">&quot;&lt;0.001&quot;</span>, <span class="st">&quot;&lt;0.001&quot;</span>, <span class="fl">0.002</span>, <span class="st">&quot;&lt;0.001&quot;</span>, <span class="st">&quot;&lt;0.001&quot;</span>, <span class="fl">0.414</span>),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  Significância <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;&quot;</span>, <span class="st">&quot;*&quot;</span>, <span class="st">&quot;***&quot;</span>, <span class="st">&quot;***&quot;</span>, <span class="st">&quot;**&quot;</span>, <span class="st">&quot;***&quot;</span>, <span class="st">&quot;***&quot;</span>, <span class="st">&quot;&quot;</span>)</span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(probit_results, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Resultados do Modelo Probit"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(probit_results, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">&quot;Resultados do Modelo Probit&quot;</span>)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="caption-top">
 <caption>Resultados do Modelo Probit</caption>
 <colgroup>
-<col style="width: 19%">
-<col style="width: 17%">
-<col style="width: 17%">
-<col style="width: 11%">
-<col style="width: 11%">
-<col style="width: 20%">
+<col style="width: 19%" />
+<col style="width: 17%" />
+<col style="width: 17%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 20%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -820,28 +808,28 @@ Number of Fisher Scoring iterations: 4</code></pre>
 </section>
 </section>
 <section id="efeitos-marginais" class="level2">
-<h2 class="anchored" data-anchor-id="efeitos-marginais">Efeitos Marginais</h2>
+<h2>Efeitos Marginais</h2>
 <section id="fórmulas-teóricas" class="level3">
-<h3 class="anchored" data-anchor-id="fórmulas-teóricas">Fórmulas Teóricas</h3>
-<p><strong>Probit:</strong> <span class="math display">\[\frac{\delta E(Y|X)}{\delta X} = \Phi(X'\beta) \cdot \beta\]</span></p>
+<h3>Fórmulas Teóricas</h3>
+<p><strong>Probit:</strong> <span class="math display">\[\frac{\delta E(Y|X)}{\delta X} = \Phi(X&#39;\beta) \cdot \beta\]</span></p>
 <p>onde <span class="math inline">\(\Phi(z) = \frac{1}{\sqrt{2\pi}}e^{-\frac{z^2}{2}}\)</span> e <span class="math inline">\(Z \sim N(0,1)\)</span></p>
-<p><strong>Logit:</strong> <span class="math display">\[\frac{\delta \Lambda(X'\beta)}{\delta(X'\beta)} = \frac{d\Lambda(X'\beta)}{d(X'\beta)} \cdot \frac{d(X'\beta)}{dX}\]</span></p>
-<p>onde <span class="math inline">\(\Lambda(X'\beta) = \frac{e^{X'\beta}}{1+e^{X'\beta}}\)</span></p>
+<p><strong>Logit:</strong> <span class="math display">\[\frac{\delta \Lambda(X&#39;\beta)}{\delta(X&#39;\beta)} = \frac{d\Lambda(X&#39;\beta)}{d(X&#39;\beta)} \cdot \frac{d(X&#39;\beta)}{dX}\]</span></p>
+<p>onde <span class="math inline">\(\Lambda(X&#39;\beta) = \frac{e^{X&#39;\beta}}{1+e^{X&#39;\beta}}\)</span></p>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Efeitos marginais - Logit</span></span>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Efeitos marginais - Logit</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>logit.mfx <span class="ot">&lt;-</span> <span class="fu">logitmfx</span>(inlf <span class="sc">~</span> nwifeinc <span class="sc">+</span> educ <span class="sc">+</span> exper <span class="sc">+</span> expersq <span class="sc">+</span> age <span class="sc">+</span> kidslt6 <span class="sc">+</span> kidsge6,</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> mroz)</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Efeitos Marginais - Modelo Logit:"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;Efeitos Marginais - Modelo Logit:&quot;</span>)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Efeitos Marginais - Modelo Logit:"</code></pre>
+<pre><code>[1] &quot;Efeitos Marginais - Modelo Logit:&quot;</code></pre>
 </div>
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>logit.mfx<span class="sc">$</span>mfxest</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>logit.mfx<span class="sc">$</span>mfxest</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 dF/dx   Std. Err.          z                P&gt;|z|
@@ -855,18 +843,18 @@ kidsge6   0.0146162143 0.018188316  0.8036046 0.421625358800103267</code></pre>
 </div>
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Efeitos marginais - Probit</span></span>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Efeitos marginais - Probit</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>probit.mfx <span class="ot">&lt;-</span> <span class="fu">probitmfx</span>(inlf <span class="sc">~</span> nwifeinc <span class="sc">+</span> educ <span class="sc">+</span> exper <span class="sc">+</span> expersq <span class="sc">+</span> age <span class="sc">+</span> kidslt6 <span class="sc">+</span> kidsge6,</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> mroz)</span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Efeitos Marginais - Modelo Probit:"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;Efeitos Marginais - Modelo Probit:&quot;</span>)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Efeitos Marginais - Modelo Probit:"</code></pre>
+<pre><code>[1] &quot;Efeitos Marginais - Modelo Probit:&quot;</code></pre>
 </div>
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>probit.mfx<span class="sc">$</span>mfxest</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>probit.mfx<span class="sc">$</span>mfxest</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 dF/dx    Std. Err.          z                 P&gt;|z|
@@ -881,22 +869,22 @@ kidsge6   0.0140630594 0.0171989534  0.8176695 0.4135459390489835130</code></pre
 </div>
 </section>
 <section id="interpretação-dos-efeitos-marginais" class="level3">
-<h3 class="anchored" data-anchor-id="interpretação-dos-efeitos-marginais">Interpretação dos Efeitos Marginais</h3>
+<h3>Interpretação dos Efeitos Marginais</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela comparativa dos efeitos marginais</span></span>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela comparativa dos efeitos marginais</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>mfx_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  Variável <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"nwifeinc"</span>, <span class="st">"educ"</span>, <span class="st">"exper"</span>, <span class="st">"expersq"</span>, <span class="st">"age"</span>, <span class="st">"kidslt6"</span>, <span class="st">"kidsge6"</span>),</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  Variável <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;nwifeinc&quot;</span>, <span class="st">&quot;educ&quot;</span>, <span class="st">&quot;exper&quot;</span>, <span class="st">&quot;expersq&quot;</span>, <span class="st">&quot;age&quot;</span>, <span class="st">&quot;kidslt6&quot;</span>, <span class="st">&quot;kidsge6&quot;</span>),</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Logit (dF/dx)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.0052</span>, <span class="fl">0.0538</span>, <span class="fl">0.0501</span>, <span class="sc">-</span><span class="fl">0.0008</span>, <span class="sc">-</span><span class="fl">0.0214</span>, <span class="sc">-</span><span class="fl">0.3509</span>, <span class="fl">0.0146</span>),</span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Probit (dF/dx)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.0047</span>, <span class="fl">0.0511</span>, <span class="fl">0.0482</span>, <span class="sc">-</span><span class="fl">0.0007</span>, <span class="sc">-</span><span class="fl">0.0206</span>, <span class="sc">-</span><span class="fl">0.3391</span>, <span class="fl">0.0141</span>),</span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Diferença</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.0005</span>, <span class="fl">0.0027</span>, <span class="fl">0.0019</span>, <span class="sc">-</span><span class="fl">0.0001</span>, <span class="sc">-</span><span class="fl">0.0008</span>, <span class="sc">-</span><span class="fl">0.0118</span>, <span class="fl">0.0005</span>)</span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(mfx_table, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Comparação dos Efeitos Marginais: Logit vs Probit"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(mfx_table, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">&quot;Comparação dos Efeitos Marginais: Logit vs Probit&quot;</span>)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="caption-top">
 <caption>Comparação dos Efeitos Marginais: Logit vs Probit</caption>
 <thead>
 <tr class="header">
@@ -965,28 +953,28 @@ kidsge6   0.0140630594 0.0171989534  0.8176695 0.4135459390489835130</code></pre
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparação dos efeitos marginais</span></span>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparação dos efeitos marginais</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>mfx_comparison <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">variavel =</span> <span class="fu">rownames</span>(logit.mfx<span class="sc">$</span>mfxest),</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">logit =</span> logit.mfx<span class="sc">$</span>mfxest[,<span class="dv">1</span>],</span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">probit =</span> probit.mfx<span class="sc">$</span>mfxest[,<span class="dv">1</span>]</span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variavel <span class="sc">!=</span> <span class="st">"(Intercept)"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(logit, probit), <span class="at">names_to =</span> <span class="st">"modelo"</span>, <span class="at">values_to =</span> <span class="st">"efeito"</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variavel <span class="sc">!=</span> <span class="st">&quot;(Intercept)&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(logit, probit), <span class="at">names_to =</span> <span class="st">&quot;modelo&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;efeito&quot;</span>)</span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mfx_comparison, <span class="fu">aes</span>(<span class="at">x =</span> variavel, <span class="at">y =</span> efeito, <span class="at">fill =</span> modelo)) <span class="sc">+</span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Comparação dos Efeitos Marginais: Logit vs Probit"</span>,</span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Variáveis"</span>,</span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Efeito Marginal"</span>,</span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Modelo"</span>) <span class="sc">+</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Comparação dos Efeitos Marginais: Logit vs Probit&quot;</span>,</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Variáveis&quot;</span>,</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Efeito Marginal&quot;</span>,</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">&quot;Modelo&quot;</span>) <span class="sc">+</span></span>
 <span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
-<figure class="figure">
-<p><img src="logit_probit_files/figure-html/marginal-effects-plot-1.png" class="img-fluid figure-img" width="960"></p>
+<figure>
+<p><img src="logit_probit_files/figure-html/marginal-effects-plot-1.png" class="img-fluid" width="960" /></p>
 </figure>
 </div>
 </div>
@@ -995,11 +983,11 @@ kidsge6   0.0140630594 0.0171989534  0.8176695 0.4135459390489835130</code></pre
 </section>
 </section>
 <section id="qualidade-da-previsão" class="level2">
-<h2 class="anchored" data-anchor-id="qualidade-da-previsão">Qualidade da Previsão</h2>
+<h2>Qualidade da Previsão</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Logit</span></span>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Logit</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>logit.fitted <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(mlogit<span class="sc">$</span>fitted.values <span class="sc">&gt;=</span> <span class="fl">0.5</span>)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>corr.pred.logit <span class="ot">&lt;-</span> <span class="fu">mean</span>(logit.fitted <span class="sc">==</span> mroz<span class="sc">$</span>inlf)</span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1007,14 +995,14 @@ kidsge6   0.0140630594 0.0171989534  0.8176695 0.4135459390489835130</code></pre
 <span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>probit.fitted <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(mprobit<span class="sc">$</span>fitted.values <span class="sc">&gt;=</span> <span class="fl">0.5</span>)</span>
 <span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>corr.pred.probit <span class="ot">&lt;-</span> <span class="fu">mean</span>(probit.fitted <span class="sc">==</span> mroz<span class="sc">$</span>inlf)</span>
 <span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Acurácia do Modelo Logit:"</span>, <span class="fu">round</span>(corr.pred.logit, <span class="dv">4</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Acurácia do Modelo Logit:&quot;</span>, <span class="fu">round</span>(corr.pred.logit, <span class="dv">4</span>))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Acurácia do Modelo Logit: 0.7357</code></pre>
 </div>
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Acurácia do Modelo Probit:"</span>, <span class="fu">round</span>(corr.pred.probit, <span class="dv">4</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Acurácia do Modelo Probit:&quot;</span>, <span class="fu">round</span>(corr.pred.probit, <span class="dv">4</span>))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1022,22 +1010,22 @@ Acurácia do Modelo Probit: 0.7344</code></pre>
 </div>
 </div>
 <section id="análise-da-qualidade-preditiva" class="level3">
-<h3 class="anchored" data-anchor-id="análise-da-qualidade-preditiva">Análise da Qualidade Preditiva</h3>
+<h3>Análise da Qualidade Preditiva</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela de acurácia</span></span>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela de acurácia</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>accuracy_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Modelo =</span> <span class="fu">c</span>(<span class="st">"Logit"</span>, <span class="st">"Probit"</span>),</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Modelo =</span> <span class="fu">c</span>(<span class="st">&quot;Logit&quot;</span>, <span class="st">&quot;Probit&quot;</span>),</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Acurácia (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">73.57</span>, <span class="fl">73.44</span>),</span>
 <span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Observações Corretas</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">554</span>, <span class="dv">553</span>),</span>
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Total de Observações</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">753</span>, <span class="dv">753</span>)</span>
 <span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(accuracy_table, <span class="at">digits =</span> <span class="dv">2</span>, <span class="at">caption =</span> <span class="st">"Comparação da Acurácia Preditiva dos Modelos"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(accuracy_table, <span class="at">digits =</span> <span class="dv">2</span>, <span class="at">caption =</span> <span class="st">&quot;Comparação da Acurácia Preditiva dos Modelos&quot;</span>)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="caption-top">
 <caption>Comparação da Acurácia Preditiva dos Modelos</caption>
 <thead>
 <tr class="header">
@@ -1068,7 +1056,7 @@ Acurácia do Modelo Probit: 0.7344</code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Distribuição das probabilidades preditas</span></span>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Distribuição das probabilidades preditas</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>pred_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">obs =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(mroz),</span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">real =</span> mroz<span class="sc">$</span>inlf,</span>
@@ -1078,26 +1066,26 @@ Acurácia do Modelo Probit: 0.7344</code></pre>
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred_data, <span class="fu">aes</span>(<span class="at">x =</span> logit_prob, <span class="at">fill =</span> <span class="fu">factor</span>(real))) <span class="sc">+</span></span>
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição das Probabilidades Preditas - Logit"</span>,</span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Probabilidade Predita"</span>,</span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequência"</span>,</span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Participação Real"</span>) <span class="sc">+</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribuição das Probabilidades Preditas - Logit&quot;</span>,</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Probabilidade Predita&quot;</span>,</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Frequência&quot;</span>,</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">&quot;Participação Real&quot;</span>) <span class="sc">+</span></span>
 <span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
 <span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred_data, <span class="fu">aes</span>(<span class="at">x =</span> probit_prob, <span class="at">fill =</span> <span class="fu">factor</span>(real))) <span class="sc">+</span></span>
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
-<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição das Probabilidades Preditas - Probit"</span>,</span>
-<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Probabilidade Predita"</span>,</span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequência"</span>,</span>
-<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Participação Real"</span>) <span class="sc">+</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribuição das Probabilidades Preditas - Probit&quot;</span>,</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Probabilidade Predita&quot;</span>,</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Frequência&quot;</span>,</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">&quot;Participação Real&quot;</span>) <span class="sc">+</span></span>
 <span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
 <span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
-<figure class="figure">
-<p><img src="logit_probit_files/figure-html/prediction-plots-1.png" class="img-fluid figure-img" width="1152"></p>
+<figure>
+<p><img src="logit_probit_files/figure-html/prediction-plots-1.png" class="img-fluid" width="1152" /></p>
 </figure>
 </div>
 </div>
@@ -1106,28 +1094,28 @@ Acurácia do Modelo Probit: 0.7344</code></pre>
 </section>
 </section>
 <section id="pseudo-r²" class="level2">
-<h2 class="anchored" data-anchor-id="pseudo-r²">Pseudo-R²</h2>
+<h2>Pseudo-R²</h2>
 <p>O pseudo-R² (McFadden) calcula a razão entre a log-verossimilhança do modelo sem preditores e a log-verossimilhança do modelo completo:</p>
 <p><span class="math display">\[pseudo\text{-}R^2 = 1 - \frac{\ln(L_{max})}{\ln(L_{max0})}\]</span></p>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo nulo (apenas intercepto)</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>logit_null <span class="ot">&lt;-</span> <span class="fu">glm</span>(inlf <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> mroz, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>))</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>probit_null <span class="ot">&lt;-</span> <span class="fu">glm</span>(inlf <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> mroz, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"probit"</span>))</span>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo nulo (apenas intercepto)</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>logit_null <span class="ot">&lt;-</span> <span class="fu">glm</span>(inlf <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> mroz, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">&quot;logit&quot;</span>))</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>probit_null <span class="ot">&lt;-</span> <span class="fu">glm</span>(inlf <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> mroz, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">&quot;probit&quot;</span>))</span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Pseudo-R²</span></span>
 <span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>pseudo_r2_logit <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="fu">logLik</span>(mlogit) <span class="sc">/</span> <span class="fu">logLik</span>(logit_null))</span>
 <span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>pseudo_r2_probit <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="fu">logLik</span>(mprobit) <span class="sc">/</span> <span class="fu">logLik</span>(probit_null))</span>
 <span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Pseudo-R² Logit:"</span>, <span class="fu">round</span>(<span class="fu">as.numeric</span>(pseudo_r2_logit), <span class="dv">4</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Pseudo-R² Logit:&quot;</span>, <span class="fu">round</span>(<span class="fu">as.numeric</span>(pseudo_r2_logit), <span class="dv">4</span>))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Pseudo-R² Logit: 0.2197</code></pre>
 </div>
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Pseudo-R² Probit:"</span>, <span class="fu">round</span>(<span class="fu">as.numeric</span>(pseudo_r2_probit), <span class="dv">4</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Pseudo-R² Probit:&quot;</span>, <span class="fu">round</span>(<span class="fu">as.numeric</span>(pseudo_r2_probit), <span class="dv">4</span>))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1135,8 +1123,8 @@ Pseudo-R² Probit: 0.2206</code></pre>
 </div>
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Log-verossimilhança</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">Log-verossimilhança:"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Log-verossimilhança</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n\n</span><span class="st">Log-verossimilhança:&quot;</span>)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1145,7 +1133,7 @@ Log-verossimilhança:</code></pre>
 </div>
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Logit:"</span>, <span class="fu">round</span>(<span class="fu">as.numeric</span>(<span class="fu">logLik</span>(mlogit)), <span class="dv">4</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Logit:&quot;</span>, <span class="fu">round</span>(<span class="fu">as.numeric</span>(<span class="fu">logLik</span>(mlogit)), <span class="dv">4</span>))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1153,7 +1141,7 @@ Logit: -401.7652</code></pre>
 </div>
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Probit:"</span>, <span class="fu">round</span>(<span class="fu">as.numeric</span>(<span class="fu">logLik</span>(mprobit)), <span class="dv">4</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Probit:&quot;</span>, <span class="fu">round</span>(<span class="fu">as.numeric</span>(<span class="fu">logLik</span>(mprobit)), <span class="dv">4</span>))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1161,30 +1149,30 @@ Probit: -401.3022</code></pre>
 </div>
 </div>
 <section id="interpretação-do-pseudo-r²" class="level3">
-<h3 class="anchored" data-anchor-id="interpretação-do-pseudo-r²">Interpretação do Pseudo-R²</h3>
+<h3>Interpretação do Pseudo-R²</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela de ajuste dos modelos</span></span>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela de ajuste dos modelos</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>fit_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Modelo =</span> <span class="fu">c</span>(<span class="st">"Logit"</span>, <span class="st">"Probit"</span>),</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Modelo =</span> <span class="fu">c</span>(<span class="st">&quot;Logit&quot;</span>, <span class="st">&quot;Probit&quot;</span>),</span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Pseudo-R² (McFadden)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.2204</span>, <span class="fl">0.2206</span>),</span>
 <span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Log-verossimilhança</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">401.77</span>, <span class="sc">-</span><span class="fl">401.30</span>),</span>
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">AIC =</span> <span class="fu">c</span>(<span class="fl">819.53</span>, <span class="fl">818.60</span>),</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Interpretação</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Ajuste moderado"</span>, <span class="st">"Ajuste moderado"</span>)</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Interpretação</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Ajuste moderado&quot;</span>, <span class="st">&quot;Ajuste moderado&quot;</span>)</span>
 <span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(fit_table, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Medidas de Ajuste dos Modelos"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(fit_table, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">&quot;Medidas de Ajuste dos Modelos&quot;</span>)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="caption-top">
 <caption>Medidas de Ajuste dos Modelos</caption>
 <colgroup>
-<col style="width: 9%">
-<col style="width: 29%">
-<col style="width: 28%">
-<col style="width: 9%">
-<col style="width: 22%">
+<col style="width: 9%" />
+<col style="width: 29%" />
+<col style="width: 28%" />
+<col style="width: 9%" />
+<col style="width: 22%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -1218,14 +1206,14 @@ Probit: -401.3022</code></pre>
 </section>
 </section>
 <section id="razão-de-chances-odds-ratio" class="level2">
-<h2 class="anchored" data-anchor-id="razão-de-chances-odds-ratio">Razão de Chances (Odds Ratio)</h2>
+<h2>Razão de Chances (Odds Ratio)</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculando a razão de chances</span></span>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculando a razão de chances</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>odds_results <span class="ot">&lt;-</span> <span class="fu">logitor</span>(inlf <span class="sc">~</span> nwifeinc <span class="sc">+</span> educ <span class="sc">+</span> exper <span class="sc">+</span> expersq <span class="sc">+</span> age <span class="sc">+</span> kidslt6 <span class="sc">+</span> kidsge6,</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> mroz)</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(odds_results)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(odds_results)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Call:
@@ -1242,42 +1230,42 @@ age      0.9157386 0.0133450 -6.0403 0.000000001538446 ***
 kidslt6  0.2361344 0.0480729 -7.0898 0.000000000001343 ***
 kidsge6  1.0619557 0.0794229  0.8038          0.421539    
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 </div>
 <section id="interpretação-da-razão-de-chances" class="level3">
-<h3 class="anchored" data-anchor-id="interpretação-da-razão-de-chances">Interpretação da Razão de Chances</h3>
+<h3>Interpretação da Razão de Chances</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela de odds ratios com interpretação</span></span>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela de odds ratios com interpretação</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>or_interpretation <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  Variável <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"nwifeinc"</span>, <span class="st">"educ"</span>, <span class="st">"exper"</span>, <span class="st">"expersq"</span>, <span class="st">"age"</span>, <span class="st">"kidslt6"</span>, <span class="st">"kidsge6"</span>),</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  Variável <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;nwifeinc&quot;</span>, <span class="st">&quot;educ&quot;</span>, <span class="st">&quot;exper&quot;</span>, <span class="st">&quot;expersq&quot;</span>, <span class="st">&quot;age&quot;</span>, <span class="st">&quot;kidslt6&quot;</span>, <span class="st">&quot;kidsge6&quot;</span>),</span>
 <span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Odds Ratio</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.979</span>, <span class="fl">1.248</span>, <span class="fl">1.229</span>, <span class="fl">0.997</span>, <span class="fl">0.916</span>, <span class="fl">0.236</span>, <span class="fl">1.062</span>),</span>
 <span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">IC 95% (inferior)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.963</span>, <span class="fl">1.140</span>, <span class="fl">1.153</span>, <span class="fl">0.995</span>, <span class="fl">0.890</span>, <span class="fl">0.190</span>, <span class="fl">0.908</span>),</span>
 <span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">IC 95% (superior)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.995</span>, <span class="fl">1.365</span>, <span class="fl">1.309</span>, <span class="fl">0.999</span>, <span class="fl">0.943</span>, <span class="fl">0.295</span>, <span class="fl">1.243</span>),</span>
 <span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  Interpretação <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2,1% menor chance por US$ 1k"</span>,</span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"24,8% maior chance por ano de educação"</span>,</span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"22,9% maior chance por ano de experiência"</span>, </span>
-<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0,3% menor chance por ano² de experiência"</span>,</span>
-<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"8,4% menor chance por ano de idade"</span>,</span>
-<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"76,4% menor chance por filho &lt; 6 anos"</span>,</span>
-<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"6,2% maior chance (não significativo)"</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;2,1% menor chance por US$ 1k&quot;</span>,</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;24,8% maior chance por ano de educação&quot;</span>,</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;22,9% maior chance por ano de experiência&quot;</span>, </span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;0,3% menor chance por ano² de experiência&quot;</span>,</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;8,4% menor chance por ano de idade&quot;</span>,</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;76,4% menor chance por filho &lt; 6 anos&quot;</span>,</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;6,2% maior chance (não significativo)&quot;</span></span>
 <span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(or_interpretation, <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="st">"Interpretação das Razões de Chances (Odds Ratios)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(or_interpretation, <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="st">&quot;Interpretação das Razões de Chances (Odds Ratios)&quot;</span>)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="caption-top">
 <caption>Interpretação das Razões de Chances (Odds Ratios)</caption>
 <colgroup>
-<col style="width: 9%">
-<col style="width: 11%">
-<col style="width: 18%">
-<col style="width: 18%">
-<col style="width: 42%">
+<col style="width: 9%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+<col style="width: 42%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -1353,9 +1341,9 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico dos odds ratios</span></span>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico dos odds ratios</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>or_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">variavel =</span> <span class="fu">c</span>(<span class="st">"nwifeinc"</span>, <span class="st">"educ"</span>, <span class="st">"exper"</span>, <span class="st">"expersq"</span>, <span class="st">"age"</span>, <span class="st">"kidslt6"</span>, <span class="st">"kidsge6"</span>),</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">variavel =</span> <span class="fu">c</span>(<span class="st">&quot;nwifeinc&quot;</span>, <span class="st">&quot;educ&quot;</span>, <span class="st">&quot;exper&quot;</span>, <span class="st">&quot;expersq&quot;</span>, <span class="st">&quot;age&quot;</span>, <span class="st">&quot;kidslt6&quot;</span>, <span class="st">&quot;kidsge6&quot;</span>),</span>
 <span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">odds_ratio =</span> <span class="fu">c</span>(<span class="fl">0.9788810</span>, <span class="fl">1.2475360</span>, <span class="fl">1.2285929</span>, <span class="fl">0.9968509</span>, <span class="fl">0.9157386</span>, <span class="fl">0.2361344</span>, <span class="fl">1.0619557</span>),</span>
 <span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower_ci =</span> <span class="fu">c</span>(<span class="fl">0.9626</span>, <span class="fl">1.1402</span>, <span class="fl">1.1526</span>, <span class="fl">0.9948</span>, <span class="fl">0.8896</span>, <span class="fl">0.1895</span>, <span class="fl">0.9075</span>),</span>
 <span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper_ci =</span> <span class="fu">c</span>(<span class="fl">0.9954</span>, <span class="fl">1.3651</span>, <span class="fl">1.3093</span>, <span class="fl">0.9989</span>, <span class="fl">0.9429</span>, <span class="fl">0.2945</span>, <span class="fl">1.2432</span>)</span>
@@ -1364,25 +1352,25 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(or_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(variavel, odds_ratio), <span class="at">y =</span> odds_ratio)) <span class="sc">+</span></span>
 <span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
 <span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lower_ci, <span class="at">ymax =</span> upper_ci), <span class="at">width =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
 <span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Razão de Chances (Odds Ratio) com Intervalos de Confiança"</span>,</span>
-<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Variáveis"</span>,</span>
-<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Odds Ratio"</span>,</span>
-<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Linha vermelha indica OR = 1 (sem efeito)"</span>) <span class="sc">+</span></span>
-<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Razão de Chances (Odds Ratio) com Intervalos de Confiança&quot;</span>,</span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Variáveis&quot;</span>,</span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Odds Ratio&quot;</span>,</span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">&quot;Linha vermelha indica OR = 1 (sem efeito)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
-<figure class="figure">
-<p><img src="logit_probit_files/figure-html/odds-ratio-plot-1.png" class="img-fluid figure-img" width="960"></p>
+<figure>
+<p><img src="logit_probit_files/figure-html/odds-ratio-plot-1.png" class="img-fluid" width="960" /></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
 <section id="interpretação-da-razão-de-chances-1" class="level3">
-<h3 class="anchored" data-anchor-id="interpretação-da-razão-de-chances-1">Interpretação da Razão de Chances:</h3>
+<h3>Interpretação da Razão de Chances:</h3>
 <ul>
 <li><strong>OR = 1</strong>: Não há diferença nas chances de ocorrência</li>
 <li><strong>OR &gt; 1</strong>: Chances maiores de ocorrência do evento</li>
@@ -1391,11 +1379,11 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </section>
 </section>
 <section id="comparação-visual-dos-modelos" class="level2">
-<h2 class="anchored" data-anchor-id="comparação-visual-dos-modelos">Comparação Visual dos Modelos</h2>
+<h2>Comparação Visual dos Modelos</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparação das funções de distribuição</span></span>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparação das funções de distribuição</span></span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>x_vals <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>logistic_vals <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>x_vals))</span>
 <span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>normal_vals <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(x_vals)</span>
@@ -1403,62 +1391,62 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>comparison_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rep</span>(x_vals, <span class="dv">2</span>),</span>
 <span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="fu">c</span>(logistic_vals, normal_vals),</span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">modelo =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Logística (Logit)"</span>, <span class="st">"Normal (Probit)"</span>), <span class="at">each =</span> <span class="dv">100</span>)</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">modelo =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;Logística (Logit)&quot;</span>, <span class="st">&quot;Normal (Probit)&quot;</span>), <span class="at">each =</span> <span class="dv">100</span>)</span>
 <span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(comparison_data, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> modelo)) <span class="sc">+</span></span>
 <span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Comparação das Funções de Distribuição"</span>,</span>
-<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"X'β"</span>,</span>
-<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"P(Y=1|X)"</span>,</span>
-<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Modelo"</span>) <span class="sc">+</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Comparação das Funções de Distribuição&quot;</span>,</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;X&#39;β&quot;</span>,</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;P(Y=1|X)&quot;</span>,</span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">&quot;Modelo&quot;</span>) <span class="sc">+</span></span>
 <span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
 <span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparação das probabilidades preditas</span></span>
 <span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred_data, <span class="fu">aes</span>(<span class="at">x =</span> logit_prob, <span class="at">y =</span> probit_prob)) <span class="sc">+</span></span>
 <span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="fu">aes</span>(<span class="at">color =</span> <span class="fu">factor</span>(real))) <span class="sc">+</span></span>
-<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Probabilidades Preditas: Logit vs Probit"</span>,</span>
-<span id="cb46-25"><a href="#cb46-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Probabilidade Logit"</span>,</span>
-<span id="cb46-26"><a href="#cb46-26" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Probabilidade Probit"</span>,</span>
-<span id="cb46-27"><a href="#cb46-27" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Participação Real"</span>) <span class="sc">+</span></span>
+<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span></span>
+<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Probabilidades Preditas: Logit vs Probit&quot;</span>,</span>
+<span id="cb46-25"><a href="#cb46-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Probabilidade Logit&quot;</span>,</span>
+<span id="cb46-26"><a href="#cb46-26" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Probabilidade Probit&quot;</span>,</span>
+<span id="cb46-27"><a href="#cb46-27" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">&quot;Participação Real&quot;</span>) <span class="sc">+</span></span>
 <span id="cb46-28"><a href="#cb46-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
 <span id="cb46-29"><a href="#cb46-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-30"><a href="#cb46-30" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb46-30"><a href="#cb46-30" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
-<figure class="figure">
-<p><img src="logit_probit_files/figure-html/model-comparison-1.png" class="img-fluid figure-img" width="1152"></p>
+<figure>
+<p><img src="logit_probit_files/figure-html/model-comparison-1.png" class="img-fluid" width="1152" /></p>
 </figure>
 </div>
 </div>
 </div>
 <section id="análise-comparativa-das-funções" class="level3">
-<h3 class="anchored" data-anchor-id="análise-comparativa-das-funções">Análise Comparativa das Funções</h3>
+<h3>Análise Comparativa das Funções</h3>
 <p><strong>Gráfico 1 - Funções de Distribuição:</strong> - As funções <strong>Logística</strong> e <strong>Normal</strong> são muito similares no intervalo [-2, 2] - A função <strong>Logística tem caudas mais pesadas</strong> (decay mais lento nos extremos) - Na prática, essa diferença tem <strong>impacto mínimo</strong> nos resultados</p>
 <p><strong>Gráfico 2 - Correlação das Probabilidades:</strong> - <strong>Correlação quase perfeita</strong> entre as probabilidades preditas pelos dois modelos - Pontos próximos à <strong>linha de 45°</strong> indicam predições muito similares - <strong>Diferenças maiores</strong> aparecem apenas nos extremos da distribuição</p>
 </section>
 </section>
 <section id="resumo-comparativo-dos-modelos" class="level2">
-<h2 class="anchored" data-anchor-id="resumo-comparativo-dos-modelos">Resumo Comparativo dos Modelos</h2>
+<h2>Resumo Comparativo dos Modelos</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela resumo comparativa</span></span>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela resumo comparativa</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>summary_comparison <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  Critério <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"AIC"</span>, <span class="st">"Log-Likelihood"</span>, <span class="st">"Pseudo-R²"</span>, <span class="st">"Acurácia (%)"</span>, </span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Convergência"</span>, <span class="st">"Interpretação"</span>, <span class="st">"Uso Prático"</span>),</span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Logit =</span> <span class="fu">c</span>(<span class="st">"819.53"</span>, <span class="st">"-401.77"</span>, <span class="st">"0.2204"</span>, <span class="st">"73.57"</span>, <span class="st">"4 iterações"</span>, </span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Odds Ratios"</span>, <span class="st">"Mais comum"</span>),</span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Probit =</span> <span class="fu">c</span>(<span class="st">"818.60"</span>, <span class="st">"-401.30"</span>, <span class="st">"0.2206"</span>, <span class="st">"73.44"</span>, <span class="st">"4 iterações"</span>, </span>
-<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Efeitos marginais"</span>, <span class="st">"Base teórica"</span>)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  Critério <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;AIC&quot;</span>, <span class="st">&quot;Log-Likelihood&quot;</span>, <span class="st">&quot;Pseudo-R²&quot;</span>, <span class="st">&quot;Acurácia (%)&quot;</span>, </span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;Convergência&quot;</span>, <span class="st">&quot;Interpretação&quot;</span>, <span class="st">&quot;Uso Prático&quot;</span>),</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Logit =</span> <span class="fu">c</span>(<span class="st">&quot;819.53&quot;</span>, <span class="st">&quot;-401.77&quot;</span>, <span class="st">&quot;0.2204&quot;</span>, <span class="st">&quot;73.57&quot;</span>, <span class="st">&quot;4 iterações&quot;</span>, </span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Odds Ratios&quot;</span>, <span class="st">&quot;Mais comum&quot;</span>),</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Probit =</span> <span class="fu">c</span>(<span class="st">&quot;818.60&quot;</span>, <span class="st">&quot;-401.30&quot;</span>, <span class="st">&quot;0.2206&quot;</span>, <span class="st">&quot;73.44&quot;</span>, <span class="st">&quot;4 iterações&quot;</span>, </span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>             <span class="st">&quot;Efeitos marginais&quot;</span>, <span class="st">&quot;Base teórica&quot;</span>)</span>
 <span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>);</span>
 <span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(summary_comparison, <span class="at">caption =</span> <span class="st">"Resumo Comparativo: Logit vs Probit"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(summary_comparison, <span class="at">caption =</span> <span class="st">&quot;Resumo Comparativo: Logit vs Probit&quot;</span>)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="caption-top">
 <caption>Resumo Comparativo: Logit vs Probit</caption>
 <thead>
 <tr class="header">
@@ -1509,9 +1497,9 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </section>
 <section id="conclusões" class="level2">
-<h2 class="anchored" data-anchor-id="conclusões">Conclusões</h2>
+<h2>Conclusões</h2>
 <section id="principais-achados" class="level3">
-<h3 class="anchored" data-anchor-id="principais-achados">Principais Achados</h3>
+<h3>Principais Achados</h3>
 <ol type="1">
 <li><strong>Ambos os modelos</strong> apresentam resultados muito similares em termos de:
 <ul>
@@ -1535,24 +1523,24 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </ol>
 </section>
 <section id="escolha-entre-modelos" class="level3">
-<h3 class="anchored" data-anchor-id="escolha-entre-modelos">Escolha entre Modelos</h3>
+<h3>Escolha entre Modelos</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Critérios de decisão</span></span>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Critérios de decisão</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>decision_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  Situação <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Melhor ajuste estatístico"</span>, <span class="st">"Interpretação via chances"</span>, </span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Base teórica sólida"</span>, <span class="st">"Facilidade computacional"</span>, </span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Tradição na literatura"</span>),</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Modelo Preferido</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Probit (AIC ligeiramente menor)"</span>, <span class="st">"Logit (Odds Ratios)"</span>, </span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Probit (distribuição normal)"</span>, <span class="st">"Logit (convergência mais rápida)"</span>, </span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Logit (mais utilizado)"</span>)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  Situação <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Melhor ajuste estatístico&quot;</span>, <span class="st">&quot;Interpretação via chances&quot;</span>, </span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;Base teórica sólida&quot;</span>, <span class="st">&quot;Facilidade computacional&quot;</span>, </span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;Tradição na literatura&quot;</span>),</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Modelo Preferido</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Probit (AIC ligeiramente menor)&quot;</span>, <span class="st">&quot;Logit (Odds Ratios)&quot;</span>, </span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;Probit (distribuição normal)&quot;</span>, <span class="st">&quot;Logit (convergência mais rápida)&quot;</span>, </span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;Logit (mais utilizado)&quot;</span>)</span>
 <span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(decision_table, <span class="at">caption =</span> <span class="st">"Critérios para Escolha entre Logit e Probit"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(decision_table, <span class="at">caption =</span> <span class="st">&quot;Critérios para Escolha entre Logit e Probit&quot;</span>)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="caption-top">
 <caption>Critérios para Escolha entre Logit e Probit</caption>
 <thead>
 <tr class="header">
@@ -1587,7 +1575,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </section>
 <section id="recomendações-práticas" class="level3">
-<h3 class="anchored" data-anchor-id="recomendações-práticas">Recomendações Práticas</h3>
+<h3>Recomendações Práticas</h3>
 <ol type="1">
 <li><p><strong>Para esta aplicação específica</strong>: Ambos os modelos são adequados, com <strong>ligeira vantagem para o Probit</strong> em termos de ajuste (AIC menor)</p></li>
 <li><p><strong>Para interpretação</strong>: O <strong>modelo Logit</strong> oferece vantagem pela facilidade de interpretação via <strong>odds ratios</strong></p></li>
@@ -1596,7 +1584,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </ol>
 </section>
 <section id="implicações-para-política-pública" class="level3">
-<h3 class="anchored" data-anchor-id="implicações-para-política-pública">Implicações para Política Pública</h3>
+<h3>Implicações para Política Pública</h3>
 <p>Os resultados sugerem pontos importantes para políticas de participação feminina no mercado de trabalho:</p>
 <ol type="1">
 <li><p><strong>Creches e cuidado infantil</strong>: O forte efeito negativo de <code>kidslt6</code> sugere que políticas de apoio ao cuidado de crianças pequenas poderiam aumentar significativamente a participação feminina</p></li>
@@ -1606,7 +1594,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </ol>
 </section>
 <section id="limitações-do-estudo" class="level3">
-<h3 class="anchored" data-anchor-id="limitações-do-estudo">Limitações do Estudo</h3>
+<h3>Limitações do Estudo</h3>
 <ol type="1">
 <li><strong>Dados de 1975</strong>: Os padrões podem ter mudado significativamente nas últimas décadas</li>
 <li><strong>Amostra específica</strong>: Resultados limitados a mulheres casadas nos EUA</li>
@@ -1615,16 +1603,20 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </ol>
 </section>
 <section id="próximos-passos" class="level3">
-<h3 class="anchored" data-anchor-id="próximos-passos">Próximos Passos</h3>
+<h3>Próximos Passos</h3>
 <p>Para futuras pesquisas, sugere-se: 1. <strong>Atualização dos dados</strong> para períodos mais recentes 2. <strong>Inclusão de variáveis adicionais</strong> (atitudes, normas sociais) 3. <strong>Análise por subgrupos</strong> (idade, educação, região) 4. <strong>Modelos de efeitos fixos</strong> para controlar heterogeneidade não observada</p>
-
-
+<div id="quarto-navigation-envelope" class="hidden">
+<p><span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyLXRpdGxl">ANÁLISE DISCRIMINANTE, PROBIT e LOGIT - Aplicações em R</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXItdGl0bGU=">ANÁLISE DISCRIMINANTE, PROBIT e LOGIT - Aplicações em R</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6QW7DoWxpc2UgZGlzY3JpbWluYW50ZQ==">Análise discriminante</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L2luZGV4Lmh0bWw=">/index.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6TG9naXQgZSBQcm9iaXQ=">Logit e Probit</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L2xvZ2l0X3Byb2JpdC5odG1s">/logit_probit.html</span></p>
+</div>
+<div id="quarto-meta-markdown" class="hidden">
+<p><span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW1ldGF0aXRsZQ==">LOGIT E PROBIT – ANÁLISE DISCRIMINANTE, PROBIT e LOGIT - Aplicações em R</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLXR3aXR0ZXJjYXJkdGl0bGU=">LOGIT E PROBIT – ANÁLISE DISCRIMINANTE, PROBIT e LOGIT - Aplicações em R</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW9nY2FyZHRpdGxl">LOGIT E PROBIT – ANÁLISE DISCRIMINANTE, PROBIT e LOGIT - Aplicações em R</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW1ldGFzaXRlbmFtZQ==">ANÁLISE DISCRIMINANTE, PROBIT e LOGIT - Aplicações em R</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLXR3aXR0ZXJjYXJkZGVzYw=="></span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW9nY2FyZGRkZXNj"></span></p>
+</div>
 </section>
 </section>
 </section>
 
 </main> <!-- /main -->
-<script id="quarto-html-after-body" type="application/javascript">
+<script id = "quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -2043,7 +2035,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 </div> <!-- /content -->
 
+</body>
 
-
-
-</body></html>
+</html>
