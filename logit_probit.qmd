@@ -1,0 +1,630 @@
+---
+title: "LOGIT E PROBIT"
+lang: pt-BR
+author:
+  - name: Marcus Antonio Cardoso Ramalho
+    email: marcus.ramalho@coppead.ufrj.br
+    affiliations:
+      - name: COPPEAD - UNIVERSIDADE FEDERAL DO RIO DE JANEIRO
+        address: Rua Pascoal Lemme, 355
+        city: Rio de Janeiro
+        state: RJ
+        postal-code: 21941-918
+  - name: Claudia Regina da Costa de Souza
+  - name: Ben Hur Correia
+date: today
+format:
+  html:
+    code-fold: true
+    toc: true
+    toc-depth: 3
+    theme: cosmo
+  pdf:
+    toc: true
+    number-sections: true
+---
+
+# Introdução
+
+## Variáveis Dependentes Limitadas
+
+Os modelos Logit e Probit (abreviação de regressão logística e probabilística) nos auxiliam na inferência de probabilidade de ocorrência de eventos onde nossa variável dependente é binária (Y ocorre ou não ocorre), e nosso objetivo é compreender como outras variáveis influenciam a ocorrência ou não desses eventos.
+
+### Por que não usar modelo linear?
+
+Em uma regressão linear, $P(Y=1|x)$ é dado por uma especificação linear dos regressores, o que pode resultar em valores menores que 0 ou maiores que 1, que não fazem sentido com a interpretação probabilística dos parâmetros.
+
+Os modelos não lineares permitem que a média condicional de Y dado X seja expressa pela probabilidade de Y acontecer dado X:
+
+$$E(Y|X) = P(Y=1|X)$$
+
+## Especificação dos Modelos
+
+### Modelo Logit
+
+A função de distribuição logística é dada por:
+
+$$F(X'\beta) = \frac{e^{X'\beta}}{1 + e^{X'\beta}} = \frac{1}{1 + e^{-X'\beta}}$$
+
+### Modelo Probit
+
+A função de distribuição normal padrão é dada por:
+
+$$F(X'\beta) = \Phi(X'\beta) = \int_{-\infty}^{X'\beta} \phi(z)dz$$
+
+onde $\phi(z) = \frac{1}{\sqrt{2\pi}}e^{-\frac{z^2}{2}}$ é a densidade da normal padrão.
+
+# Exemplo Prático: Participação no Mercado de Trabalho
+
+## Descrição dos Dados
+
+Consideramos `inlf` ("no mercado de trabalho") como uma variável binária que indica a participação no mercado de trabalho por uma mulher casada durante 1975:
+
+- `inlf = 1` se a mulher relata ter trabalhado por um salário fora de casa
+- `inlf = 0` caso contrário
+
+### Variáveis Explicativas:
+
+- `nwifeinc`: outras fontes de renda (milhares de dólares)
+- `educ`: anos de educação
+- `exper`: anos de experiência no mercado de trabalho
+- `expersq`: experiência ao quadrado
+- `age`: idade
+- `kidslt6`: número de filhos menores de 6 anos
+- `kidsge6`: número de filhos entre 6 e 18 anos
+
+## Modelo Teórico
+
+$$inlf = \beta_0 - \beta_1 \cdot nwifeinc + \beta_2 \cdot educ + \beta_3 \cdot exper - \beta_4 \cdot exper^2 - \beta_5 \cdot age - \beta_6 \cdot kidslt6 + \beta_7 \cdot kidsge6$$
+
+```{r setup, message=FALSE, warning=FALSE}
+options(scipen = 999) # desliga a notação científica
+
+# Pacotes necessários
+library(tidyverse)    # análise de dados
+library(magrittr)     # operador pipe
+library(mfx)          # efeitos marginais e odds ratio
+library(wooldridge)   # base de dados
+library(gridExtra)    # múltiplos gráficos
+library(knitr)        # tabelas
+library(ggplot2)      # gráficos
+library(plotly)       # gráficos interativos
+```
+
+## Análise Exploratória dos Dados
+
+```{r exploratory}
+# Visualizar estrutura dos dados
+glimpse(mroz)
+
+# Estatísticas descritivas
+summary(mroz[c("inlf", "nwifeinc", "educ", "exper", "age", "kidslt6", "kidsge6")])
+
+# Proporção de mulheres no mercado de trabalho
+prop_trabalho <- mean(mroz$inlf)
+cat("Proporção de mulheres no mercado de trabalho:", round(prop_trabalho, 3))
+```
+
+### Interpretação da Análise Exploratória
+
+Os dados revelam informações importantes sobre o perfil das 753 mulheres casadas na amostra:
+
+- **Participação no mercado de trabalho**: 56,8% das mulheres trabalhavam fora de casa em 1975
+- **Perfil demográfico**: Idade média de 42,5 anos, com 12,3 anos de educação em média
+- **Experiência profissional**: 10,6 anos de experiência média no mercado de trabalho
+- **Composição familiar**: Em média, 0,24 filhos menores de 6 anos e 1,35 filhos entre 6-18 anos
+- **Renda familiar**: Outras fontes de renda (além do trabalho da mulher) de US$ 20,13 mil em média
+
+```{r plots-exploratory, fig.height=8, fig.width=12}
+# Gráfico de barras para variável dependente
+p1 <- ggplot(mroz, aes(x = factor(inlf))) +
+  geom_bar(fill = c("coral", "lightblue"), alpha = 0.7) +
+  labs(title = "Distribuição da Participação no Mercado de Trabalho",
+       x = "Participação (0 = Não, 1 = Sim)",
+       y = "Frequência") +
+  theme_minimal()
+
+# Boxplots das variáveis contínuas por grupo
+p2 <- mroz %>%
+  select(inlf, nwifeinc, educ, exper, age) %>%
+  pivot_longer(-inlf, names_to = "variavel", values_to = "valor") %>%
+  ggplot(aes(x = factor(inlf), y = valor, fill = factor(inlf))) +
+  geom_boxplot(alpha = 0.7) +
+  facet_wrap(~variavel, scales = "free_y") +
+  labs(title = "Distribuição das Variáveis por Participação no Mercado",
+       x = "Participação (0 = Não, 1 = Sim)",
+       y = "Valor",
+       fill = "Participação") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+# Histograma dos filhos
+p3 <- ggplot(mroz, aes(x = kidslt6, fill = factor(inlf))) +
+  geom_histogram(position = "dodge", bins = 5, alpha = 0.7) +
+  labs(title = "Distribuição de Filhos < 6 anos",
+       x = "Número de filhos < 6 anos",
+       y = "Frequência",
+       fill = "Participação") +
+  theme_minimal()
+
+p4 <- ggplot(mroz, aes(x = kidsge6, fill = factor(inlf))) +
+  geom_histogram(position = "dodge", bins = 8, alpha = 0.7) +
+  labs(title = "Distribuição de Filhos 6-18 anos",
+       x = "Número de filhos 6-18 anos",
+       y = "Frequência",
+       fill = "Participação") +
+  theme_minimal()
+
+grid.arrange(p1, p2, p3, p4, layout_matrix = rbind(c(1,1), c(2,2), c(3,4)))
+```
+
+### Análise dos Gráficos Exploratórios
+
+Os gráficos revelam padrões importantes:
+
+1. **Distribuição equilibrada**: Há uma distribuição relativamente equilibrada entre mulheres que trabalham (57%) e que não trabalham (43%)
+
+2. **Diferenças por grupo**:
+   - Mulheres que trabalham tendem a ter **mais educação** e **mais experiência**
+   - Mulheres que **não trabalham** tendem a ter **mais filhos pequenos** e outras fontes de renda maiores
+   - A **idade** apresenta distribuição similar entre os grupos
+
+3. **Impacto dos filhos**: A presença de filhos menores de 6 anos mostra clara associação negativa com a participação no mercado de trabalho
+
+## Estimação dos Modelos
+
+### Modelo Logit
+
+```{r logit-model}
+mlogit <- glm(inlf ~ nwifeinc + educ + exper + expersq + age + kidslt6 + kidsge6,
+              data = mroz,
+              family = binomial(link = "logit"))
+
+summary(mlogit)
+```
+
+### Interpretação do Modelo Logit
+
+```{r logit-table}
+# Tabela formatada dos resultados do Logit
+logit_results <- data.frame(
+  Variável = c("(Intercepto)", "nwifeinc", "educ", "exper", "expersq", "age", "kidslt6", "kidsge6"),
+  Coeficiente = c(0.425452, -0.021345, 0.221170, 0.205870, -0.003154, -0.088024, -1.443354, 0.060112),
+  `Erro Padrão` = c(0.860365, 0.008421, 0.043439, 0.032057, 0.001016, 0.014573, 0.203583, 0.074789),
+  `Valor z` = c(0.495, -2.535, 5.091, 6.422, -3.104, -6.040, -7.090, 0.804),
+  `p-valor` = c(0.621, 0.011, "<0.001", "<0.001", 0.002, "<0.001", "<0.001", 0.422),
+  Significância = c("", "*", "***", "***", "**", "***", "***", "")
+)
+
+kable(logit_results, digits = 4, caption = "Resultados do Modelo Logit")
+```
+
+**Principais achados do modelo Logit:**
+
+- **AIC: 819.53** | **Deviance residual: 803.53** | **4 iterações** para convergência
+- **Variáveis significativas**: nwifeinc, educ, exper, expersq, age, kidslt6
+- **Variável não significativa**: kidsge6 (p = 0.422)
+
+### Modelo Probit
+
+```{r probit-model}
+mprobit <- glm(inlf ~ nwifeinc + educ + exper + expersq + age + kidslt6 + kidsge6,
+               data = mroz,
+               family = binomial(link = "probit"))
+
+summary(mprobit)
+```
+
+### Interpretação do Modelo Probit
+
+```{r probit-table}
+# Tabela formatada dos resultados do Probit
+probit_results <- data.frame(
+  Variável = c("(Intercepto)", "nwifeinc", "educ", "exper", "expersq", "age", "kidslt6", "kidsge6"),
+  Coeficiente = c(0.2700736, -0.0120236, 0.1309040, 0.1233472, -0.0018871, -0.0528524, -0.8683247, 0.0360056),
+  `Erro Padrão` = c(0.5080782, 0.0049392, 0.0253987, 0.0187587, 0.0005999, 0.0084624, 0.1183773, 0.0440303),
+  `Valor z` = c(0.532, -2.434, 5.154, 6.575, -3.145, -6.246, -7.335, 0.818),
+  `p-valor` = c(0.595, 0.015, "<0.001", "<0.001", 0.002, "<0.001", "<0.001", 0.414),
+  Significância = c("", "*", "***", "***", "**", "***", "***", "")
+)
+
+kable(probit_results, digits = 4, caption = "Resultados do Modelo Probit")
+```
+
+**Principais achados do modelo Probit:**
+
+- **AIC: 818.6** (ligeiramente melhor que Logit) | **Deviance residual: 802.6**
+- **Mesma estrutura de significância** que o modelo Logit
+- **Coeficientes menores** em magnitude (característica do modelo Probit)
+
+## Efeitos Marginais
+
+### Fórmulas Teóricas
+
+**Probit:** 
+$$\frac{\delta E(Y|X)}{\delta X} = \Phi(X'\beta) \cdot \beta$$
+
+onde $\Phi(z) = \frac{1}{\sqrt{2\pi}}e^{-\frac{z^2}{2}}$ e $Z \sim N(0,1)$
+
+**Logit:**
+$$\frac{\delta \Lambda(X'\beta)}{\delta(X'\beta)} = \frac{d\Lambda(X'\beta)}{d(X'\beta)} \cdot \frac{d(X'\beta)}{dX}$$
+
+onde $\Lambda(X'\beta) = \frac{e^{X'\beta}}{1+e^{X'\beta}}$
+
+```{r marginal-effects}
+# Efeitos marginais - Logit
+logit.mfx <- logitmfx(inlf ~ nwifeinc + educ + exper + expersq + age + kidslt6 + kidsge6,
+                      data = mroz)
+
+print("Efeitos Marginais - Modelo Logit:")
+logit.mfx$mfxest
+
+# Efeitos marginais - Probit
+probit.mfx <- probitmfx(inlf ~ nwifeinc + educ + exper + expersq + age + kidslt6 + kidsge6,
+                        data = mroz)
+
+print("Efeitos Marginais - Modelo Probit:")
+probit.mfx$mfxest
+```
+
+### Interpretação dos Efeitos Marginais
+
+```{r marginal-effects-table}
+# Tabela comparativa dos efeitos marginais
+mfx_table <- data.frame(
+  Variável = c("nwifeinc", "educ", "exper", "expersq", "age", "kidslt6", "kidsge6"),
+  `Logit (dF/dx)` = c(-0.0052, 0.0538, 0.0501, -0.0008, -0.0214, -0.3509, 0.0146),
+  `Probit (dF/dx)` = c(-0.0047, 0.0511, 0.0482, -0.0007, -0.0206, -0.3391, 0.0141),
+  `Diferença` = c(-0.0005, 0.0027, 0.0019, -0.0001, -0.0008, -0.0118, 0.0005)
+)
+
+kable(mfx_table, digits = 4, caption = "Comparação dos Efeitos Marginais: Logit vs Probit")
+```
+
+**Interpretação prática dos efeitos marginais:**
+
+- **nwifeinc**: Cada US$ 1.000 adicionais em outras fontes de renda **reduz** a probabilidade de trabalhar em ~0,5 pontos percentuais
+- **educ**: Cada ano adicional de educação **aumenta** a probabilidade de trabalhar em ~5,4 pontos percentuais
+- **exper**: Cada ano adicional de experiência **aumenta** a probabilidade de trabalhar em ~5,0 pontos percentuais
+- **age**: Cada ano adicional de idade **reduz** a probabilidade de trabalhar em ~2,1 pontos percentuais
+- **kidslt6**: Cada filho adicional menor de 6 anos **reduz** a probabilidade de trabalhar em ~35 pontos percentuais
+- **kidsge6**: Efeito não significativo (~1,4 pontos percentuais)
+
+```{r marginal-effects-plot, fig.height=6, fig.width=10}
+# Comparação dos efeitos marginais
+mfx_comparison <- data.frame(
+  variavel = rownames(logit.mfx$mfxest),
+  logit = logit.mfx$mfxest[,1],
+  probit = probit.mfx$mfxest[,1]
+) %>%
+  filter(variavel != "(Intercept)") %>%
+  pivot_longer(cols = c(logit, probit), names_to = "modelo", values_to = "efeito")
+
+ggplot(mfx_comparison, aes(x = variavel, y = efeito, fill = modelo)) +
+  geom_col(position = "dodge", alpha = 0.7) +
+  labs(title = "Comparação dos Efeitos Marginais: Logit vs Probit",
+       x = "Variáveis",
+       y = "Efeito Marginal",
+       fill = "Modelo") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+**Observação importante**: Os efeitos marginais são muito similares entre os modelos Logit e Probit, confirmando a robustez dos resultados.
+
+## Qualidade da Previsão
+
+```{r prediction-quality}
+# Logit
+logit.fitted <- as.numeric(mlogit$fitted.values >= 0.5)
+corr.pred.logit <- mean(logit.fitted == mroz$inlf)
+
+# Probit
+probit.fitted <- as.numeric(mprobit$fitted.values >= 0.5)
+corr.pred.probit <- mean(probit.fitted == mroz$inlf)
+
+cat("Acurácia do Modelo Logit:", round(corr.pred.logit, 4))
+cat("\nAcurácia do Modelo Probit:", round(corr.pred.probit, 4))
+```
+
+### Análise da Qualidade Preditiva
+
+```{r prediction-table}
+# Tabela de acurácia
+accuracy_table <- data.frame(
+  Modelo = c("Logit", "Probit"),
+  `Acurácia (%)` = c(73.57, 73.44),
+  `Observações Corretas` = c(554, 553),
+  `Total de Observações` = c(753, 753)
+)
+
+kable(accuracy_table, digits = 2, caption = "Comparação da Acurácia Preditiva dos Modelos")
+```
+
+**Interpretação da acurácia:**
+- Ambos os modelos apresentam **acurácia similar (~73,5%)**
+- Classificam corretamente cerca de **554 de 753 observações**
+- Performance **superior ao acaso** (que seria ~57% para esta amostra balanceada)
+
+```{r prediction-plots, fig.height=6, fig.width=12}
+# Distribuição das probabilidades preditas
+pred_data <- data.frame(
+  obs = 1:nrow(mroz),
+  real = mroz$inlf,
+  logit_prob = mlogit$fitted.values,
+  probit_prob = mprobit$fitted.values
+)
+
+p1 <- ggplot(pred_data, aes(x = logit_prob, fill = factor(real))) +
+  geom_histogram(alpha = 0.7, bins = 30) +
+  labs(title = "Distribuição das Probabilidades Preditas - Logit",
+       x = "Probabilidade Predita",
+       y = "Frequência",
+       fill = "Participação Real") +
+  theme_minimal()
+
+p2 <- ggplot(pred_data, aes(x = probit_prob, fill = factor(real))) +
+  geom_histogram(alpha = 0.7, bins = 30) +
+  labs(title = "Distribuição das Probabilidades Preditas - Probit",
+       x = "Probabilidade Predita",
+       y = "Frequência",
+       fill = "Participação Real") +
+  theme_minimal()
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+**Análise dos histogramas de probabilidades:**
+- Ambos os modelos mostram **boa separação** entre os grupos
+- Mulheres que **não trabalham** concentram-se em probabilidades baixas (<0,4)
+- Mulheres que **trabalham** apresentam distribuição mais dispersa
+- **Sobreposição** indica casos de difícil classificação
+
+## Pseudo-R²
+
+O pseudo-R² (McFadden) calcula a razão entre a log-verossimilhança do modelo sem preditores e a log-verossimilhança do modelo completo:
+
+$$pseudo\text{-}R^2 = 1 - \frac{\ln(L_{max})}{\ln(L_{max0})}$$
+
+```{r pseudo-r2}
+# Modelo nulo (apenas intercepto)
+logit_null <- glm(inlf ~ 1, data = mroz, family = binomial(link = "logit"))
+probit_null <- glm(inlf ~ 1, data = mroz, family = binomial(link = "probit"))
+
+# Pseudo-R²
+pseudo_r2_logit <- 1 - (logLik(mlogit) / logLik(logit_null))
+pseudo_r2_probit <- 1 - (logLik(mprobit) / logLik(probit_null))
+
+cat("Pseudo-R² Logit:", round(as.numeric(pseudo_r2_logit), 4))
+cat("\nPseudo-R² Probit:", round(as.numeric(pseudo_r2_probit), 4))
+
+# Log-verossimilhança
+cat("\n\nLog-verossimilhança:")
+cat("\nLogit:", round(as.numeric(logLik(mlogit)), 4))
+cat("\nProbit:", round(as.numeric(logLik(mprobit)), 4))
+```
+
+### Interpretação do Pseudo-R²
+
+```{r pseudo-r2-table}
+# Tabela de ajuste dos modelos
+fit_table <- data.frame(
+  Modelo = c("Logit", "Probit"),
+  `Pseudo-R² (McFadden)` = c(0.2204, 0.2206),
+  `Log-verossimilhança` = c(-401.77, -401.30),
+  AIC = c(819.53, 818.60),
+  `Interpretação` = c("Ajuste moderado", "Ajuste moderado")
+)
+
+kable(fit_table, digits = 4, caption = "Medidas de Ajuste dos Modelos")
+```
+
+**Interpretação do ajuste:**
+- **Pseudo-R² ≈ 0,22**: Indica que os modelos explicam cerca de **22% da variação** na decisão de participar do mercado de trabalho
+- **Valores considerados adequados** para modelos de escolha binária (tipicamente entre 0,2-0,4)
+- **Probit ligeiramente superior** em termos de log-verossimilhança e AIC
+
+## Razão de Chances (Odds Ratio)
+
+```{r odds-ratio}
+# Calculando a razão de chances
+odds_results <- logitor(inlf ~ nwifeinc + educ + exper + expersq + age + kidslt6 + kidsge6,
+                        data = mroz)
+print(odds_results)
+```
+
+### Interpretação da Razão de Chances
+
+```{r odds-ratio-table}
+# Tabela de odds ratios com interpretação
+or_interpretation <- data.frame(
+  Variável = c("nwifeinc", "educ", "exper", "expersq", "age", "kidslt6", "kidsge6"),
+  `Odds Ratio` = c(0.979, 1.248, 1.229, 0.997, 0.916, 0.236, 1.062),
+  `IC 95% (inferior)` = c(0.963, 1.140, 1.153, 0.995, 0.890, 0.190, 0.908),
+  `IC 95% (superior)` = c(0.995, 1.365, 1.309, 0.999, 0.943, 0.295, 1.243),
+  Interpretação = c(
+    "2,1% menor chance por US$ 1k",
+    "24,8% maior chance por ano de educação",
+    "22,9% maior chance por ano de experiência", 
+    "0,3% menor chance por ano² de experiência",
+    "8,4% menor chance por ano de idade",
+    "76,4% menor chance por filho < 6 anos",
+    "6,2% maior chance (não significativo)"
+  )
+)
+
+kable(or_interpretation, digits = 3, caption = "Interpretação das Razões de Chances (Odds Ratios)")
+```
+
+**Principais insights dos Odds Ratios:**
+
+1. **kidslt6 (OR = 0.236)**: O efeito mais forte - ter um filho menor de 6 anos reduz as chances de trabalhar em **76,4%**
+2. **educ (OR = 1.248)**: Cada ano de educação **aumenta as chances** de trabalhar em **24,8%**
+3. **exper (OR = 1.229)**: Experiência tem **efeito positivo**, mas com retornos decrescentes (expersq < 1)
+4. **age (OR = 0.916)**: Idade avançada **reduz as chances** de participação
+5. **nwifeinc (OR = 0.979)**: Maior renda familiar **reduz ligeiramente** a necessidade de trabalhar
+
+```{r odds-ratio-plot, fig.height=6, fig.width=10}
+# Gráfico dos odds ratios
+or_data <- data.frame(
+  variavel = c("nwifeinc", "educ", "exper", "expersq", "age", "kidslt6", "kidsge6"),
+  odds_ratio = c(0.9788810, 1.2475360, 1.2285929, 0.9968509, 0.9157386, 0.2361344, 1.0619557),
+  lower_ci = c(0.9626, 1.1402, 1.1526, 0.9948, 0.8896, 0.1895, 0.9075),
+  upper_ci = c(0.9954, 1.3651, 1.3093, 0.9989, 0.9429, 0.2945, 1.2432)
+)
+
+ggplot(or_data, aes(x = reorder(variavel, odds_ratio), y = odds_ratio)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
+  coord_flip() +
+  labs(title = "Razão de Chances (Odds Ratio) com Intervalos de Confiança",
+       x = "Variáveis",
+       y = "Odds Ratio",
+       caption = "Linha vermelha indica OR = 1 (sem efeito)") +
+  theme_minimal()
+```
+
+### Interpretação da Razão de Chances:
+
+- **OR = 1**: Não há diferença nas chances de ocorrência
+- **OR > 1**: Chances maiores de ocorrência do evento
+- **OR < 1**: Chances menores de ocorrência do evento
+
+## Comparação Visual dos Modelos
+
+```{r model-comparison, fig.height=8, fig.width=12}
+# Comparação das funções de distribuição
+x_vals <- seq(-4, 4, length.out = 100)
+logistic_vals <- 1 / (1 + exp(-x_vals))
+normal_vals <- pnorm(x_vals)
+
+comparison_data <- data.frame(
+  x = rep(x_vals, 2),
+  y = c(logistic_vals, normal_vals),
+  modelo = rep(c("Logística (Logit)", "Normal (Probit)"), each = 100)
+)
+
+p1 <- ggplot(comparison_data, aes(x = x, y = y, color = modelo)) +
+  geom_line(linewidth = 1.2) +
+  labs(title = "Comparação das Funções de Distribuição",
+       x = "X'β",
+       y = "P(Y=1|X)",
+       color = "Modelo") +
+  theme_minimal()
+
+# Comparação das probabilidades preditas
+p2 <- ggplot(pred_data, aes(x = logit_prob, y = probit_prob)) +
+  geom_point(alpha = 0.6, aes(color = factor(real))) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed") +
+  labs(title = "Probabilidades Preditas: Logit vs Probit",
+       x = "Probabilidade Logit",
+       y = "Probabilidade Probit",
+       color = "Participação Real") +
+  theme_minimal()
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### Análise Comparativa das Funções
+
+**Gráfico 1 - Funções de Distribuição:**
+- As funções **Logística** e **Normal** são muito similares no intervalo [-2, 2]
+- A função **Logística tem caudas mais pesadas** (decay mais lento nos extremos)
+- Na prática, essa diferença tem **impacto mínimo** nos resultados
+
+**Gráfico 2 - Correlação das Probabilidades:**
+- **Correlação quase perfeita** entre as probabilidades preditas pelos dois modelos
+- Pontos próximos à **linha de 45°** indicam predições muito similares
+- **Diferenças maiores** aparecem apenas nos extremos da distribuição
+
+## Resumo Comparativo dos Modelos
+
+```{r summary-table}
+# Tabela resumo comparativa
+summary_comparison <- data.frame(
+  Critério = c("AIC", "Log-Likelihood", "Pseudo-R²", "Acurácia (%)", 
+               "Convergência", "Interpretação", "Uso Prático"),
+  Logit = c("819.53", "-401.77", "0.2204", "73.57", "4 iterações", 
+            "Odds Ratios", "Mais comum"),
+  Probit = c("818.60", "-401.30", "0.2206", "73.44", "4 iterações", 
+             "Efeitos marginais", "Base teórica")
+)
+
+kable(summary_comparison, caption = "Resumo Comparativo: Logit vs Probit")
+```
+
+## Conclusões
+
+### Principais Achados
+
+1. **Ambos os modelos** apresentam resultados muito similares em termos de:
+   - Significância dos coeficientes
+   - Direção dos efeitos
+   - Qualidade de ajuste (Pseudo-R² ≈ 0,22)
+   - Acurácia preditiva (~73,5%)
+
+2. **Variáveis mais importantes**:
+   - **kidslt6**: forte efeito negativo (presença de filhos pequenos reduz participação em 35 p.p.)
+   - **educ**: efeito positivo forte (cada ano aumenta participação em 5,4 p.p.)
+   - **exper**: efeito positivo com retornos decrescentes
+   - **age**: efeito negativo (idade avançada reduz participação)
+   - **nwifeinc**: efeito negativo pequeno (maior renda familiar reduz necessidade de trabalhar)
+
+3. **Variável não significativa**:
+   - **kidsge6**: filhos mais velhos não afetam significativamente a decisão de trabalhar
+
+### Escolha entre Modelos
+
+```{r decision-criteria}
+# Critérios de decisão
+decision_table <- data.frame(
+  Situação = c("Melhor ajuste estatístico", "Interpretação via chances", 
+               "Base teórica sólida", "Facilidade computacional", 
+               "Tradição na literatura"),
+  `Modelo Preferido` = c("Probit (AIC ligeiramente menor)", "Logit (Odds Ratios)", 
+                         "Probit (distribuição normal)", "Logit (convergência mais rápida)", 
+                         "Logit (mais utilizado)")
+)
+
+kable(decision_table, caption = "Critérios para Escolha entre Logit e Probit")
+```
+
+### Recomendações Práticas
+
+1. **Para esta aplicação específica**: Ambos os modelos são adequados, com **ligeira vantagem para o Probit** em termos de ajuste (AIC menor)
+
+2. **Para interpretação**: O **modelo Logit** oferece vantagem pela facilidade de interpretação via **odds ratios**
+
+3. **Para pesquisa acadêmica**: A escolha pode depender da **tradição da área** ou **preferências teóricas**
+
+4. **Para predição**: Ambos apresentam **performance equivalente** (diferença de acurácia < 0,2%)
+
+### Implicações para Política Pública
+
+Os resultados sugerem pontos importantes para políticas de participação feminina no mercado de trabalho:
+
+1. **Creches e cuidado infantil**: O forte efeito negativo de `kidslt6` sugere que políticas de apoio ao cuidado de crianças pequenas poderiam aumentar significativamente a participação feminina
+
+2. **Educação**: O efeito positivo robusto da educação reforça a importância de investimentos em educação feminina
+
+3. **Experiência profissional**: Programas de capacitação e experiência profissional têm potencial de impacto positivo
+
+4. **Idade**: Políticas direcionadas a mulheres mais jovens podem ser mais efetivas
+
+### Limitações do Estudo
+
+1. **Dados de 1975**: Os padrões podem ter mudado significativamente nas últimas décadas
+2. **Amostra específica**: Resultados limitados a mulheres casadas nos EUA
+3. **Variáveis omitidas**: Outros fatores importantes podem não estar incluídos (atitudes sociais, disponibilidade de emprego, etc.)
+4. **Causalidade**: As relações estimadas são associações, não necessariamente causais
+
+### Próximos Passos
+
+Para futuras pesquisas, sugere-se:
+1. **Atualização dos dados** para períodos mais recentes
+2. **Inclusão de variáveis adicionais** (atitudes, normas sociais)
+3. **Análise por subgrupos** (idade, educação, região)
+4. **Modelos de efeitos fixos** para controlar heterogeneidade não observada
+
+

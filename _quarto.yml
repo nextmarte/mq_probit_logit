@@ -4,11 +4,13 @@ project:
   
 
 website:
-  title: "PROBIT e LOGIT - Aplicações em R"
+  title: "ANÁLISE DISCRIMINANTE, PROBIT e LOGIT - Aplicações em R"
   navbar:
     left:
       - href: index.qmd
-        text: Home
+        text: Análise discriminante
+      - href: logit_probit.qmd
+        text: Logit e Probit
 
 format:
   html:

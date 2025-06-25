@@ -1,5 +1,5 @@
 ---
-title: "ANÁLISE DISCRIMINANTE, PROBIT E LOGIT - Aplicações na Classificação de Vinhos"
+title: "ANÁLISE DISCRIMINANTE"
 lang: pt-BR
 author:
   - name: Marcus Antonio Cardoso Ramalho
@@ -13,12 +13,14 @@ author:
   - name: Claudia Regina da Costa de Souza
   - name: Ben Hur Correia
 date: today
-filters:
-  - webr
+
 ---
 
 ```{r}
 #| include: false
+#| echo: true
+#| message: false
+#| warning: false
 
 # Carregando os pacotes necessários
 if (!require("MASS")) install.packages("MASS")
@@ -42,6 +44,13 @@ if (!require("reshape2")) install.packages("reshape2")
 if (!require("viridis")) install.packages("viridis")
 if (!require("plotly")) install.packages("plotly")
 if (!require("RColorBrewer")) install.packages("RColorBrewer")
+
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
 
 library(MASS)
 library(klaR)
@@ -79,26 +88,22 @@ O objetivo é identificar as características perceptuais que distinguem cliente
 - **Grupo 2**: De 1 a 5 anos  
 - **Grupo 3**: Mais de 5 anos
 
-#### Carregamento e Inspeção dos Dados
+#### Carregamento e Inspeção dos Dados do arquivo spss
 
 ```{r}
 # Carregando os dados HBAT
 hbat <- haven::read_sav("data/hbat.sav")
 
-# Examinando a estrutura dos dados
-str(hbat)
-head(hbat)
+glimpse(hbat)
 
-# Verificando as variáveis disponíveis
-names(hbat)
-
-# Examinando as primeiras linhas para entender a estrutura
-dplyr::glimpse(hbat)
 ```
 
-#### Visualização Inicial dos Dados
 
 ```{r}
+#| include: false
+#| echo: false
+
+
 # Gráfico da distribuição da variável dependente
 p_dist_grupos <- ggplot2::ggplot(data.frame(x1 = hbat$x1), ggplot2::aes(x = factor(x1))) +
   ggplot2::geom_bar(fill = "steelblue", alpha = 0.7) +
@@ -113,9 +118,12 @@ p_dist_grupos <- ggplot2::ggplot(data.frame(x1 = hbat$x1), ggplot2::aes(x = fact
 print(p_dist_grupos)
 ```
 
-#### Identificação das Variáveis Disponíveis
+
 
 ```{r}
+#| include: false
+#| echo: false
+
 # Identificando as variáveis corretas baseado na estrutura real do dataset
 # Primeiro vamos ver quais variáveis existem realmente
 print("Variáveis disponíveis no dataset:")
@@ -132,9 +140,13 @@ cat("\nEstrutura das primeiras 10 variáveis:\n")
 str(hbat[,1:min(10, ncol(hbat))])
 ```
 
-#### Análise das Variáveis Categóricas
+
 
 ```{r}
+#| include: false
+#| echo: false
+
+
 # Preparando os dados baseado na estrutura real encontrada
 # Vamos adaptar baseado nas variáveis que realmente existem
 
@@ -160,33 +172,32 @@ Com base na inspeção dos dados, identificamos que o dataset HBAT possui exatam
 - **x6-x18**: Variáveis independentes (percepções sobre a HBAT)
 
 ```{r}
-# Baseado na inspeção, vamos definir as variáveis corretas
-# O dataset HBAT tem exatamente as variáveis que precisamos!
-# x1 = variável dependente (Customer Type: 1=Less than 1 year, 2=1 to 5 years, 3=Over 5 years)
-# x6-x18 = variáveis independentes (percepções sobre HBAT)
-
+#| include: false
+#| echo: false
 # Agora que sabemos a estrutura, vamos usar as variáveis corretas
 variavel_dependente <- "x1"  # Customer Type - exatamente o que precisamos
 variaveis_independentes <- paste0("x", 6:18)  # x6 a x18 - percepções
 
-cat("Usando variável dependente:", variavel_dependente, "\n")
-cat("Usando variáveis independentes:", paste(variaveis_independentes, collapse = ", "), "\n")
-
 # Verificando se x1 tem os valores corretos
-cat("\nValores únicos em x1 (Customer Type):\n")
 print(table(hbat$x1, useNA = "ifany"))
 
 # Verificando os labels da variável x1
 if(haven::is.labelled(hbat$x1)) {
-  cat("\nLabels da variável x1:\n")
   print(haven::as_factor(hbat$x1))
   print(table(haven::as_factor(hbat$x1)))
 }
 ```
 
+**Configuração das Variáveis:**
+
+- **Variável dependente**: `r variavel_dependente`
+- **Variáveis independentes**: `r paste(variaveis_independentes, collapse = ", ")`
+- **Total de variáveis independentes**: `r length(variaveis_independentes)`
+
 #### Preparação do Dataset Final
 
 ```{r}
+#| include: false
 # Criando dataset limpo com as variáveis corretas identificadas
 hbat_clean <- hbat %>%
   dplyr::select(dplyr::all_of(c(variavel_dependente, variaveis_independentes))) %>%
@@ -238,100 +249,40 @@ obter_descricao <- function(var) {
     return(var)
   }
 }
-
-# Verificar se a variável X1 foi criada corretamente
-cat("Verificando variável X1:\n")
-str(hbat_clean$X1)
-cat("\nDistribuição da variável X1:\n")
-print(table(hbat_clean$X1))
-
-# Resumo dos dados limpos
-cat("\nEstrutura do dataset limpo:\n")
-str(hbat_clean)
-
-cat("\nResumo dos dados:\n")
-summary(hbat_clean)
-
-cat("\nPrimeiras linhas do dataset limpo:\n")
-print(head(hbat_clean))
-
-# Verificar nomes das colunas finais
-cat("\nNomes das colunas finais:\n")
-print(names(hbat_clean))
-
-# Mostrando descrições das variáveis
-cat("\n=== DESCRIÇÕES DAS VARIÁVEIS ===\n")
-for(var in names(descricoes_variaveis)) {
-  cat(var, "-", descricoes_variaveis[var], "\n")
-}
 ```
 
-#### Análise Exploratória com Visualizações
+**Resumo da Preparação dos Dados:**
 
+- **Total de observações**: `r nrow(hbat_clean)`
+- **Variáveis independentes**: `r length(variaveis_independentes)`
+- **Grupos identificados**: `r nlevels(hbat_clean$X1)`
+
+**Distribuição da Variável Dependente (X1):**
 ```{r}
-# 1. Distribuição final dos grupos
-p_grupos_final <- ggplot2::ggplot(hbat_clean, ggplot2::aes(x = X1, fill = X1)) +
-  ggplot2::geom_bar(alpha = 0.8) +
-  ggplot2::geom_text(stat = "count", ggplot2::aes(label = after_stat(count)), 
-                     vjust = -0.5, size = 4, fontface = "bold") +
-  ggplot2::scale_fill_brewer(type = "qual", palette = "Set2") +
-  ggplot2::labs(title = "Distribuição Final dos Grupos",
-                subtitle = paste("Total de observações:", nrow(hbat_clean)),
-                x = descricoes_variaveis["X1"], 
-                y = "Número de Observações") +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(legend.position = "none",
-                 plot.title = ggplot2::element_text(size = 14, face = "bold"),
-                 axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
-
-# 2. Boxplot de todas as variáveis por grupo com descrições
-dados_long <- hbat_clean %>%
-  tidyr::pivot_longer(cols = -X1, names_to = "Variavel", values_to = "Valor") %>%
-  dplyr::mutate(Variavel_Desc = sapply(Variavel, obter_descricao))
-
-p_boxplot_all <- ggplot2::ggplot(dados_long, ggplot2::aes(x = X1, y = Valor, fill = X1)) +
-  ggplot2::geom_boxplot(alpha = 0.7) +
-  ggplot2::facet_wrap(~ Variavel_Desc, scales = "free_y", ncol = 4) +
-  ggplot2::scale_fill_brewer(type = "qual", palette = "Set2") +
-  ggplot2::labs(title = "Distribuição de Todas as Variáveis por Grupo",
-                x = descricoes_variaveis["X1"], 
-                y = "Valor da Variável") +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(legend.position = "bottom",
-                 plot.title = ggplot2::element_text(size = 14, face = "bold"),
-                 axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
-                 strip.text = ggplot2::element_text(size = 7))
-
-# 3. Heatmap de médias por grupo com descrições
-medias_heatmap <- aggregate(hbat_clean[, variaveis_independentes], 
-                           by = list(hbat_clean$X1), FUN = mean)
-names(medias_heatmap)[1] <- "Grupo"
-
-medias_heatmap_long <- medias_heatmap %>%
-  tidyr::pivot_longer(cols = -Grupo, names_to = "Variavel", values_to = "Media") %>%
-  dplyr::mutate(Variavel_Desc = sapply(Variavel, obter_descricao))
-
-p_heatmap_medias <- ggplot2::ggplot(medias_heatmap_long, 
-                                   ggplot2::aes(x = Variavel_Desc, y = Grupo, fill = Media)) +
-  ggplot2::geom_tile(color = "white") +
-  ggplot2::geom_text(ggplot2::aes(label = round(Media, 1)), 
-                     color = "white", fontface = "bold", size = 3) +
-  ggplot2::scale_fill_viridis_c(name = "Média") +
-  ggplot2::labs(title = "Heatmap das Médias das Variáveis por Grupo",
-                x = "Variáveis", y = "Grupos") +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 8),
-                 plot.title = ggplot2::element_text(size = 14, face = "bold"))
-
-# Exibindo os gráficos
-print(p_grupos_final)
-print(p_boxplot_all)
-print(p_heatmap_medias)
+#| echo: false
+knitr::kable(table(hbat_clean$X1), col.names = c("Grupo", "Frequência"))
 ```
+
+**Descrições das Variáveis:**
+
+| Código | Descrição |
+|--------|-----------|
+| X1 | Customer Type |
+| X6 | Product Quality |
+| X7 | E-Commerce Activities |
+| X8 | Technical Support |
+| X9 | Complaint Resolution |
+| X10 | Advertising |
+| X11 | Product Line |
+| X12 | Salesforce Image |
+| X13 | Competitive Pricing |
+| X14 | Warranty & Claims |
+| X15 | New Products |
+| X16 | Ordering & Billing |
+| X17 | Price Flexibility |
+| X18 | Delivery Speed |
 
 ### Estágio 2: Delineamento da Pesquisa de Análise Discriminante
-
-A análise discriminante requer a divisão dos dados em amostras de estimação e validação para avaliar adequadamente o desempenho do modelo. Utilizamos uma divisão de 60% para análise e 40% para validação, resultando em `r nrow(amostra_analise)` casos na amostra de análise e `r nrow(amostra_validacao)` casos na amostra de validação.
 
 ```{r}
 # Divisão em amostras de análise e validação
@@ -342,81 +293,64 @@ indices_analise <- sample(1:n_total, size = floor(0.6 * n_total))
 amostra_analise <- hbat_clean[indices_analise, ]
 amostra_validacao <- hbat_clean[-indices_analise, ]
 
-cat("Amostra de análise:", nrow(amostra_analise), "casos\n")
-cat("Amostra de validação:", nrow(amostra_validacao), "casos\n")
-
-# Verificar se X1 existe nas amostras
-cat("\nVerificando X1 na amostra de análise:\n")
-if("X1" %in% names(amostra_analise)) {
-  print(table(amostra_analise$X1))
-} else {
-  cat("Erro: Variável X1 não encontrada na amostra de análise\n")
-  print(names(amostra_analise))
-}
-
-cat("\nDistribuição dos grupos na amostra de validação:\n")
-if("X1" %in% names(amostra_validacao)) {
-  print(table(amostra_validacao$X1))
-} else {
-  cat("Erro: Variável X1 não encontrada na amostra de validação\n")
-  print(names(amostra_validacao))
-}
-
 # Verificar balanceamento dos grupos
 prop_analise <- table(amostra_analise$X1) / nrow(amostra_analise)
 prop_validacao <- table(amostra_validacao$X1) / nrow(amostra_validacao)
-
-cat("\nProporções na amostra de análise:\n")
-print(round(prop_analise, 3))
-cat("\nProporções na amostra de validação:\n")
-print(round(prop_validacao, 3))
 ```
+
+A análise discriminante requer a divisão dos dados em amostras de estimação e validação para avaliar adequadamente o desempenho do modelo. Utilizamos uma divisão de 60% para análise e 40% para validação.
+
+**Características das Amostras:**
+
+- **Amostra de análise**: `r nrow(amostra_analise)` casos
+- **Amostra de validação**: `r nrow(amostra_validacao)` casos
+
+**Distribuição dos Grupos por Amostra:**
+
+| Grupo | Análise (n) | Análise (%) | Validação (n) | Validação (%) |
+|-------|-------------|-------------|---------------|---------------|
+| Menos de 1 ano | `r table(amostra_analise$X1)[1]` | `r round(prop_analise[1] * 100, 1)`% | `r table(amostra_validacao$X1)[1]` | `r round(prop_validacao[1] * 100, 1)`% |
+| De 1 a 5 anos | `r table(amostra_analise$X1)[2]` | `r round(prop_analise[2] * 100, 1)`% | `r table(amostra_validacao$X1)[2]` | `r round(prop_validacao[2] * 100, 1)`% |
+| Mais de 5 anos | `r table(amostra_analise$X1)[3]` | `r round(prop_analise[3] * 100, 1)`% | `r table(amostra_validacao$X1)[3]` | `r round(prop_validacao[3] * 100, 1)`% |
 
 ### Estágio 3: Pressupostos da Análise Discriminante
 
 #### 3.1 Normalidade Multivariada
 
-O teste de normalidade multivariada é fundamental para verificar se os dados seguem uma distribuição normal multivariada, pressuposto da análise discriminante linear. Testamos cada um dos `r nlevels(amostra_analise$X1)` grupos separadamente usando o teste de Henze-Zirkler.
+O teste de normalidade multivariada é fundamental para verificar se os dados seguem uma distribuição normal multivariada, pressuposto da análise discriminante linear. Testamos cada um dos três grupos separadamente usando o teste de Henze-Zirkler.
 
-**Interpretação dos Resultados:**
-
-Os resultados do teste de Henze-Zirkler mostram que:
-- **Grupo "Menos de 1 ano"**: p-valor = 0.113 (> 0.05) → ✓ **Normal** - Dados seguem distribuição normal multivariada
-- **Grupo "De 1 a 5 anos"**: p-valor = 0.063 (> 0.05) → ✓ **Normal** - Dados seguem distribuição normal multivariada  
-- **Grupo "Mais de 5 anos"**: p-valor = 0.035 (< 0.05) → ✗ **Não Normal** - Violação da normalidade multivariada
-
-**Implicações:**
-- Dois dos três grupos atendem ao pressuposto de normalidade multivariada
-- O grupo "Mais de 5 anos" apresenta desvio da normalidade, mas este é considerado aceitável na prática
-- A análise discriminante linear suporta pequenos desvios da normalidade, especialmente com amostras de tamanho adequado
 
 ```{r}
 library(MVN)
 
+# Armazenar resultados dos testes de normalidade
+resultados_normalidade <- list()
+
 for(grupo in levels(amostra_analise$X1)) {
   dados_grupo <- amostra_analise[amostra_analise$X1 == grupo, variaveis_independentes]
-  cat("\n=== Grupo:", grupo, "===\n")
   
   # Usando parâmetros corretos da função mvn
   resultado_mvn <- mvn(dados_grupo, mvn_test = "hz", univariate_test = "SW")
-  print(resultado_mvn$multivariate_normality)
+  resultados_normalidade[[grupo]] <- resultado_mvn$multivariate_normality
   
   # Teste alternativo se o primeiro falhar
   if(is.null(resultado_mvn$multivariate_normality)) {
-    cat("Tentando teste alternativo de normalidade...\n")
     resultado_mardia <- mvn(dados_grupo, mvn_test = "mardia")
-    print(resultado_mardia$multivariate_normality)
+    resultados_normalidade[[grupo]] <- resultado_mardia$multivariate_normality
   }
 }
+
+# Mostrar resultados
+print(resultados_normalidade)
 ```
 
 **Resumo dos Testes de Normalidade:**
 
-Com base nos resultados obtidos, `r sum(c(0.113, 0.063, 0.035) > 0.05)` dos `r nlevels(amostra_analise$X1)` grupos atendem ao pressuposto de normalidade multivariada ao nível de significância de 5%. O grupo que apresentou desvio (p = 0.035) está próximo do limite aceitável, e a análise discriminante pode prosseguir com confiança.
+Com base nos resultados obtidos, 2 dos 3 grupos atendem ao pressuposto de normalidade multivariada ao nível de significância de 5%. O grupo que apresentou desvio (p = 0.035) está próximo do limite aceitável, e a análise discriminante pode prosseguir com confiança.
 
 #### 3.2 Homogeneidade das Matrizes de Covariância
 
-O teste M de Box verifica se as matrizes de covariância dos grupos são homogêneas, outro pressuposto importante da análise discriminante. Este teste avalia se as `r length(variaveis_independentes)` variáveis independentes apresentam estruturas de covariância similares entre os grupos.
+O teste M de Box verifica se as matrizes de covariância dos grupos são homogêneas, outro pressuposto importante da análise discriminante. Este teste avalia se as 13 variáveis independentes apresentam estruturas de covariância similares entre os grupos.
 
 **Interpretação dos Resultados do Teste M de Box:**
 
@@ -425,7 +359,7 @@ O teste M de Box verifica se as matrizes de covariância dos grupos são homogê
 **Implicações Práticas:**
 - A violação da homogeneidade das covariâncias sugere que a **Análise Discriminante Quadrática (QDA)** poderia ser mais apropriada que a Linear (LDA)
 - No entanto, a LDA é robusta a violações moderadas deste pressuposto, especialmente quando os tamanhos das amostras são similares
-- Como os grupos estão relativamente balanceados (`r paste(table(amostra_analise$X1), collapse = ", ")` casos), podemos prosseguir com cautela usando LDA
+- Como os grupos estão relativamente balanceados (conforme mostrado acima), podemos prosseguir com cautela usando LDA
 - Os resultados devem ser interpretados considerando esta limitação
 
 ```{r}
@@ -439,24 +373,16 @@ tryCatch({
   teste_box <- boxM(dados_teste, grupos_teste)
   print(teste_box)
 }, error = function(e) {
-  cat("Teste M de Box não pôde ser executado:", e$message, "\n")
-  cat("Verificando homogeneidade via inspeção visual das matrizes de covariância\n")
+  message("Teste M de Box não pôde ser executado: ", e$message)
   
   for(grupo in levels(amostra_analise$X1)) {
     dados_grupo <- amostra_analise[amostra_analise$X1 == grupo, variaveis_independentes]
     cov_grupo <- cov(dados_grupo)
-    cat("\nMatriz de Covariância - Grupo:", grupo, "\n")
+    message("\nMatriz de Covariância - Grupo: ", grupo)
     print(round(cov_grupo, 3))
   }
 })
 ```
-
-**Estratégias para Lidar com a Violação:**
-
-1. **Continuar com LDA**: Aceitável dado o balanceamento dos grupos
-2. **Considerar QDA**: Permitiria matrizes de covariância diferentes por grupo
-3. **Validação cruzada rigorosa**: Para avaliar a robustez dos resultados
-4. **Interpretação cautelosa**: Especialmente para predições em novos dados
 
 #### 3.3 Multicolinearidade
 
@@ -473,17 +399,14 @@ Os Fatores de Inflação da Variância (VIF) revelam problemas significativos de
   - X9 (5.33), X12 (5.78)
 
 - **VIF > 10**: Multicolinearidade alta (problemática)
-  - **X11 (52.77)**, **X17 (41.49)**, **X18 (56.34)**
-
-**Variáveis com Multicolinearidade Severa:**
-- **X11 (Linha de Produtos)**: VIF = 52.77
-- **X17 (Flexibilidade de Preços)**: VIF = 41.49  
-- **X18 (Velocidade de Entrega)**: VIF = 56.34
+  - **X11 (Product Line)**: VIF = 52.77
+  - **X17 (Price Flexibility)**: VIF = 41.49  
+  - **X18 (Delivery Speed)**: VIF = 56.34
 
 **Implicações:**
 - As variáveis X11, X17 e X18 apresentam alta correlação com outras variáveis independentes
 - Isso pode causar instabilidade nos coeficientes discriminantes
-- O determinante da matriz de correlação (`r round(det_cor, 6)`) confirma a presença de multicolinearidade
+- O determinante da matriz de correlação confirma a presença de multicolinearidade
 - Apesar disso, seguimos o exemplo de Hair et al. usando X6 e X18, reconhecendo esta limitação
 
 ```{r}
@@ -499,56 +422,44 @@ corrplot::corrplot(matriz_cor, method = "color", type = "upper",
 
 # Determinante da matriz de correlação
 det_cor <- det(matriz_cor)
-cat("Determinante da matriz de correlação:", det_cor, "\n")
 
 # VIF para identificar multicolinearidade
 modelo_temp <- lm(as.numeric(X1) ~ ., data = amostra_analise[, c("X1", variaveis_independentes)])
 vif_valores <- car::vif(modelo_temp)
-print("Fatores de Inflação da Variância (VIF):")
-print(vif_valores)
-
-# Gráfico dos valores VIF com descrições
-vif_df <- data.frame(
-  Variavel = names(vif_valores),
-  VIF = as.numeric(vif_valores),
-  Categoria = ifelse(vif_valores > 10, "Alto (>10)", 
-                    ifelse(vif_valores > 5, "Moderado (5-10)", "Baixo (<5)"))
-) %>%
-  dplyr::mutate(Variavel_Desc = sapply(Variavel, obter_descricao))
-
-p_vif <- ggplot2::ggplot(vif_df, ggplot2::aes(x = reorder(Variavel_Desc, VIF), y = VIF, fill = Categoria)) +
-  ggplot2::geom_col(alpha = 0.8) +
-  ggplot2::geom_hline(yintercept = c(5, 10), linetype = "dashed", color = "red") +
-  ggplot2::geom_text(ggplot2::aes(label = round(VIF, 1)), hjust = -0.1, size = 3) +
-  ggplot2::coord_flip() +
-  ggplot2::scale_fill_manual(values = c("Baixo (<5)" = "green", 
-                                       "Moderado (5-10)" = "orange", 
-                                       "Alto (>10)" = "red")) +
-  ggplot2::labs(title = "Fatores de Inflação da Variância (VIF)",
-                subtitle = "Linhas tracejadas em 5 e 10 indicam limites de multicolinearidade",
-                x = "Variáveis", y = "VIF",
-                fill = "Nível de\nMulticolinearidade") +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(plot.title = ggplot2::element_text(size = 14, face = "bold"),
-                 axis.text.y = ggplot2::element_text(size = 9))
-
-print(p_vif)
 ```
 
-#### Estágio 4: Estimação do Modelo Discriminante e Avaliação do Ajuste Geral
+**Análise de Multicolinearidade:**
+
+- **Determinante da matriz de correlação**: `r round(det_cor, 6)`
+
+**Classificação dos Valores VIF:**
+
+| Categoria | Critério | Variáveis |
+|-----------|----------|-----------|
+| **Baixa** (< 5) | Aceitável | `r paste(names(vif_valores[vif_valores < 5]), collapse = ", ")` |
+| **Moderada** (5-10) | Preocupante | `r paste(names(vif_valores[vif_valores >= 5 & vif_valores < 10]), collapse = ", ")` |
+| **Alta** (≥ 10) | Problemática | `r paste(names(vif_valores[vif_valores >= 10]), collapse = ", ")` |
+
+**Variáveis com Multicolinearidade Severa:**
+```{r}
+#| echo: false
+vif_altos <- vif_valores[vif_valores >= 10]
+knitr::kable(data.frame(
+  Variável = names(vif_altos),
+  Descrição = sapply(names(vif_altos), obter_descricao),
+  VIF = round(vif_altos, 2)
+), row.names = FALSE)
+```
+
+### Estágio 4: Estimação do Modelo Discriminante e Avaliação do Ajuste Geral
 
 #### 4.1 Método Stepwise
-
-O procedimento stepwise automatiza a seleção de variáveis mais relevantes para a discriminação entre grupos. Implementaremos um procedimento stepwise manual baseado em ANOVAs univariadas e critérios de Wilks Lambda.
 
 ```{r}
 library(klaR)
 library(MASS)
 
 # Implementando stepwise manual baseado em critérios estatísticos
-# Testando cada variável individualmente usando ANOVA
-
-print("=== ANÁLISE UNIVARIADA DE CADA VARIÁVEL ===")
 f_univariados <- numeric(length(variaveis_independentes))
 p_univariados <- numeric(length(variaveis_independentes))
 names(f_univariados) <- variaveis_independentes
@@ -563,142 +474,89 @@ for(i in seq_along(variaveis_independentes)) {
     anova_summary <- summary(anova_temp)
     f_univariados[i] <- anova_summary[[1]]["X1", "F value"]
     p_univariados[i] <- anova_summary[[1]]["X1", "Pr(>F)"]
-    
-    cat("\nVariável:", var, "\n")
-    cat("F univariado:", round(f_univariados[i], 3), "\n")
-    cat("p-valor:", round(p_univariados[i], 4), "\n")
-    
-    # Interpretação da significância
-    if(p_univariados[i] < 0.001) {
-      cat("*** Altamente significativo\n")
-    } else if(p_univariados[i] < 0.01) {
-      cat("** Muito significativo\n")  
-    } else if(p_univariados[i] < 0.05) {
-      cat("* Significativo\n")
-    } else {
-      cat("Não significativo\n")
-    }
-    
   }, error = function(e) {
-    cat("Erro com variável", var, ":", e$message, "\n")
     f_univariados[i] <- 0
     p_univariados[i] <- 1
   })
 }
 
-# Ordenando variáveis por poder discriminante (valor F)
+# Ordenando variáveis por poder discriminante
 ordem_importancia <- order(f_univariados, decreasing = TRUE)
 vars_ordenadas <- variaveis_independentes[ordem_importancia]
-
-cat("\n=== RANKING DE VARIÁVEIS POR PODER DISCRIMINANTE ===\n")
-for(i in 1:length(vars_ordenadas)) {
-  var <- vars_ordenadas[i]
-  cat(sprintf("%2d. %s - F = %6.3f, p = %7.4f", 
-              i, var, f_univariados[var], p_univariados[var]))
-  
-  # Indicadores de significância
-  if(p_univariados[var] < 0.001) {
-    cat(" ***\n")
-  } else if(p_univariados[var] < 0.01) {
-    cat(" **\n")  
-  } else if(p_univariados[var] < 0.05) {
-    cat(" *\n")
-  } else {
-    cat("\n")
-  }
-}
-
-# Selecionando variáveis significativas para o modelo stepwise
 vars_significativas <- names(p_univariados[p_univariados < 0.05])
-cat("\n=== VARIÁVEIS SIGNIFICATIVAS (p < 0.05) ===\n")
-cat("Total de variáveis significativas:", length(vars_significativas), "\n")
-cat("Variáveis:", paste(vars_significativas, collapse = ", "), "\n")
 
-# Procedimento stepwise forward manual usando as top variáveis
-cat("\n=== PROCEDIMENTO STEPWISE FORWARD ===\n")
-
-# Corrigindo o teste de uma variável - usando ANOVA ao invés de MANOVA
-var_top1 <- vars_ordenadas[1]
-cat("Testando modelo com variável mais discriminante:", var_top1, "\n")
-
-# Para uma variável, usamos ANOVA simples
-anova_1var <- aov(as.formula(paste(var_top1, "~ X1")), data = amostra_analise)
-f_1var <- summary(anova_1var)[[1]]["X1", "F value"]
-cat("Estatística F (1 variável):", round(f_1var, 3), "\n")
-
-# Testando modelo com as duas top variáveis (seguindo Hair et al.: X6 e X18)
-var1 <- "X6"  # Qualidade do Produto  
-var2 <- "X18" # Velocidade de Entrega (conforme exemplo do livro)
-
-cat("\nTestando modelo Hair et al.: X6 + X18\n")
+# Testando modelo Hair et al.: X6 + X18
 formula_hair <- as.formula("cbind(X6, X18) ~ X1")
 manova_hair <- manova(formula_hair, data = amostra_analise)
 resultado_hair <- summary(manova_hair, test = "Wilks")
 
-cat("Lambda de Wilks (X6 + X18):", round(resultado_hair$stats["X1", "Wilks"], 4), "\n")
-cat("F aproximado:", round(resultado_hair$stats["X1", "approx F"], 3), "\n")
-cat("p-valor:", formatC(resultado_hair$stats["X1", "Pr(>F)"], format = "e", digits = 3), "\n")
-
-# Testando modelo empírico (X18 + X6 é o mesmo que X6 + X18)
-cat("\nO modelo empírico (X18 + X6) é idêntico ao modelo Hair et al.\n")
-cat("Lambda de Wilks:", round(resultado_hair$stats["X1", "Wilks"], 4), "\n")
-
-# Seleção final do modelo (seguindo Hair et al.)
 modelo_stepwise <- list(
   formula = "X1 ~ X6 + X18",
   selected_vars = c("X6", "X18"),
-  method = "lda",
   wilks_lambda = resultado_hair$stats["X1", "Wilks"],
   f_statistic = resultado_hair$stats["X1", "approx F"],
-  p_value = resultado_hair$stats["X1", "Pr(>F)"],
-  top_univariate = vars_ordenadas[1:min(5, length(vars_ordenadas))],
-  f_values_top = f_univariados[vars_ordenadas[1:min(5, length(vars_ordenadas))]]
+  p_value = resultado_hair$stats["X1", "Pr(>F)"]
 )
-
-cat("\n=== RESUMO DO MODELO STEPWISE FINAL ===\n")
-cat("Fórmula selecionada:", modelo_stepwise$formula, "\n")
-cat("Variáveis incluídas:", paste(modelo_stepwise$selected_vars, collapse = ", "), "\n")
-cat("Lambda de Wilks:", round(modelo_stepwise$wilks_lambda, 4), "\n")
-cat("Estatística F:", round(modelo_stepwise$f_statistic, 3), "\n")
-cat("P-valor:", formatC(modelo_stepwise$p_value, format = "e", digits = 3), "\n")
-
-cat("\nTop 5 variáveis por discriminação univariada:\n")
-for(i in 1:min(5, length(modelo_stepwise$top_univariate))) {
-  var <- modelo_stepwise$top_univariate[i]
-  cat(sprintf("%d. %s (F = %.3f)\n", i, var, modelo_stepwise$f_values_top[i]))
-}
-
-# Justificativa da escolha
-cat("\n=== JUSTIFICATIVA DA SELEÇÃO ===\n")
-cat("Embora", vars_ordenadas[1], "seja a variável mais discriminante univariadamente,\n")
-cat("seguimos o exemplo de Hair et al. usando X6 (Qualidade) + X18 (Velocidade)\n")
-cat("por razões teóricas e interpretabilidade gerencial.\n")
-cat("O modelo X6 + X18 apresenta Lambda de Wilks =", round(modelo_stepwise$wilks_lambda, 4), "\n")
-cat("indicando boa capacidade discriminante multivariada.\n")
 ```
+
+**Análise Univariada de Variáveis:**
+
+**Ranking por Poder Discriminante (Top 5):**
+```{r}
+#| echo: false
+top5 <- data.frame(
+  Posição = 1:5,
+  Variável = vars_ordenadas[1:5],
+  Descrição = sapply(vars_ordenadas[1:5], obter_descricao),
+  `F-value` = round(f_univariados[vars_ordenadas[1:5]], 3),
+  `p-valor` = round(p_univariados[vars_ordenadas[1:5]], 4),
+  Significância = ifelse(p_univariados[vars_ordenadas[1:5]] < 0.001, "***",
+                        ifelse(p_univariados[vars_ordenadas[1:5]] < 0.01, "**",
+                              ifelse(p_univariados[vars_ordenadas[1:5]] < 0.05, "*", "")))
+)
+knitr::kable(top5, row.names = FALSE)
+```
+
+**Modelo Stepwise Final:**
+
+- **Fórmula selecionada**: `r modelo_stepwise$formula`
+- **Variáveis incluídas**: `r paste(modelo_stepwise$selected_vars, collapse = " + ")`
+- **Lambda de Wilks**: `r round(modelo_stepwise$wilks_lambda, 4)`
+- **Estatística F**: `r round(modelo_stepwise$f_statistic, 3)`
+- **p-valor**: `r formatC(modelo_stepwise$p_value, format = "e", digits = 3)`
+- **Total de variáveis significativas**: `r length(vars_significativas)` de `r length(variaveis_independentes)`
+
+**Justificativa da Seleção:**
+Embora `r vars_ordenadas[1]` seja a variável mais discriminante univariadamente, seguimos o exemplo de Hair et al. usando X6 (Product Quality) + X18 (Delivery Speed) por razões teóricas e interpretabilidade gerencial.
 
 #### 4.2 Análise Discriminante Linear
 
-O modelo discriminante final utiliza as variáveis X6 (Qualidade do Produto) e X18 (Velocidade de Entrega), seguindo o exemplo de Hair et al. Este modelo gera `r length(eigenvalues)` função(ões) discriminante(s), com a primeira função explicando `r round(variancia_explicada[1], 1)`% da variância discriminante.
-
 ```{r}
-library(MASS)
-
-# Modelo completo inicial
-modelo_completo <- lda(X1 ~ ., data = amostra_analise[, c("X1", variaveis_independentes)])
-
 # Modelo final conforme Hair et al. (X6 e X18)
 modelo_final <- lda(X1 ~ X6 + X18, data = amostra_analise)
-print(modelo_final)
 
 # Autovalores e variância explicada
 eigenvalues <- modelo_final$svd^2
 variancia_explicada <- eigenvalues / sum(eigenvalues) * 100
+```
 
-cat("\nAutovalores:\n")
-print(eigenvalues)
-cat("\nVariância explicada por função:\n")
-print(variancia_explicada)
+O modelo discriminante final utiliza as variáveis X6 (Product Quality) e X18 (Delivery Speed), seguindo o exemplo de Hair et al.
+
+**Características do Modelo:**
+
+- **Número de funções discriminantes**: `r length(eigenvalues)`
+- **Variância explicada pela Função 1**: `r round(variancia_explicada[1], 1)`%
+- **Variância explicada pela Função 2**: `r round(variancia_explicada[2], 1)`%
+- **Variância total explicada**: `r round(sum(variancia_explicada), 1)`%
+
+**Autovalores:**
+```{r}
+#| echo: false
+knitr::kable(data.frame(
+  Função = paste("LD", 1:length(eigenvalues)),
+  Autovalor = round(eigenvalues, 4),
+  `Variância Explicada (%)` = round(variancia_explicada, 1)
+), row.names = FALSE)
 ```
 
 #### 4.3 Significância Estatística
@@ -712,6 +570,32 @@ summary(modelo_manova, test = "Wilks")
 summary.aov(modelo_manova)
 ```
 
+**Interpretação dos Resultados de Significância:**
+
+**Teste MANOVA (Multivariado):**
+- **Lambda de Wilks = 0.29005**: Valor baixo indica boa discriminação entre grupos
+- **F aproximado = 23.99**: Estatística F alta sugere diferenças significativas
+- **p-valor = 2.388e-14**: Altamente significativo (p < 0.001)
+- **Conclusão**: O modelo discriminante é estatisticamente significativo
+
+**Análises Univariadas por Variável:**
+
+**X6 (Product Quality):**
+- **F = 22.885**: Alta capacidade discriminante individual
+- **p-valor = 5.062e-08**: Altamente significativo
+- **Interpretação**: A qualidade do produto varia significativamente entre os grupos de tempo de relacionamento
+
+**X18 (Delivery Speed):**
+- **F = 24.425**: Maior capacidade discriminante individual entre as duas variáveis
+- **p-valor = 2.182e-08**: Altamente significativo  
+- **Interpretação**: A percepção da velocidade de entrega é o melhor discriminador individual entre os grupos
+
+**Implicações Gerenciais:**
+1. Ambas as variáveis contribuem significativamente para distinguir os grupos
+2. Velocidade de entrega (X18) é ligeiramente mais discriminante que qualidade (X6)
+3. O modelo como um todo tem poder discriminante muito forte
+4. As percepções evoluem significativamente com o tempo de relacionamento
+
 #### 4.4 Centróides dos Grupos
 
 Os centróides representam o "centro" de cada grupo no espaço discriminante.
@@ -720,8 +604,6 @@ Os centróides representam o "centro" de cada grupo no espaço discriminante.
 centroides <- aggregate(amostra_analise[, c("X6", "X18")], 
                        by = list(amostra_analise$X1), FUN = mean)
 names(centroides)[1] <- "Grupo"
-print("Centróides dos Grupos:")
-print(centroides)
 
 predict_centroides <- predict(modelo_final, centroides[, c("X6", "X18")])
 centroides_discriminantes <- predict_centroides$x
@@ -729,6 +611,37 @@ rownames(centroides_discriminantes) <- centroides$Grupo
 print("\nCentróides no Espaço Discriminante:")
 print(centroides_discriminantes)
 ```
+
+**Análise dos Centróides no Espaço Discriminante:**
+
+**Posicionamento dos Grupos:**
+
+| Grupo | LD1 | LD2 | Interpretação |
+|-------|-----|-----|---------------|
+| Menos de 1 ano | -1.61 | 0.31 | Percepções mais baixas, posicionamento único |
+| De 1 a 5 anos | 0.26 | -0.71 | Percepções intermediárias, diferenciação moderada |
+| Mais de 5 anos | 1.47 | 0.53 | Percepções mais elevadas, alta satisfação |
+
+**Padrões Identificados:**
+
+1. **Evolução Linear em LD1**: Os valores de LD1 crescem progressivamente (-1.61 → 0.26 → 1.47), indicando melhoria das percepções com o tempo de relacionamento
+
+2. **Separação Clara**: A distância entre centróides confirma que os grupos são bem diferenciados no espaço discriminante
+
+3. **Trajetória de Relacionamento**: 
+   - **Clientes novos** (< 1 ano): Expectativas em formação, percepções iniciais mais críticas
+   - **Clientes intermediários** (1-5 anos): Período de consolidação das percepções
+   - **Clientes estabelecidos** (> 5 anos): Relacionamento maduro, percepções mais positivas
+
+**Interpretação das Funções Discriminantes:**
+
+- **LD1**: Representa principalmente a **evolução temporal** das percepções (experiência acumulada)
+- **LD2**: Representa **diferenças qualitativas** específicas entre os grupos intermediários e extremos
+
+**Implicações Estratégicas:**
+- Foco na **retenção inicial**: Clientes novos precisam de atenção especial
+- **Gestão da jornada**: Processo gradual de melhoria das percepções
+- **Fidelização**: Clientes de longo prazo são verdadeiros advogados da marca
 
 ### Estágio 5: Interpretação dos Resultados
 
@@ -756,9 +669,32 @@ for(i in 1:ncol(cargas_discriminantes)) {
 }
 ```
 
-#### 5.2 Rotação VARIMAX
+**Interpretação da Matriz de Cargas Discriminantes:**
 
-A rotação VARIMAX simplifica a interpretação das funções discriminantes.
+**Análise da Função Discriminante 1 (LD1):**
+
+**Variáveis com Cargas Altas (|carga| ≥ 0.40):**
+- **X11 (Product Line)**: 0.773 - Maior contribuição para LD1
+- **X18 (Delivery Speed)**: 0.765 - Forte correlação positiva
+- **X6 (Product Quality)**: 0.736 - Alta correlação positiva  
+- **X9 (Complaint Resolution)**: 0.728 - Contribuição significativa
+- **X16 (Ordering & Billing)**: 0.699 - Forte correlação
+
+**Interpretação de LD1**: Representa a **dimensão geral de satisfação** com aspectos operacionais e de qualidade da HBAT. Valores altos indicam percepções positivas em qualidade, entrega, linha de produtos e resolução de problemas.
+
+**Análise da Função Discriminante 2 (LD2):**
+
+**Variáveis com Cargas Altas (|carga| ≥ 0.40):**
+- **X17 (Price Flexibility)**: -0.699 - Maior magnitude (negativa)
+- **X6 (Product Quality)**: 0.677 - Correlação positiva forte
+- **X18 (Delivery Speed)**: -0.644 - Correlação negativa significativa
+- **X9 (Complaint Resolution)**: -0.467 - Contribuição moderada negativa
+- **X16 (Ordering & Billing)**: -0.416 - Correlação negativa
+- **X12 (Salesforce Image)**: -0.418 - Contribuição moderada negativa
+
+**Interpretação de LD2**: Representa um **contraste entre qualidade percebida** versus **flexibilidade operacional**. Separa grupos com diferentes prioridades: qualidade versus agilidade/flexibilidade.
+
+#### 5.2 Rotação VARIMAX
 
 ```{r}
 # Aplicando rotação VARIMAX às cargas discriminantes
@@ -783,9 +719,32 @@ if(ncol(cargas_discriminantes) > 1) {
 }
 ```
 
-#### 5.3 Índice de Potência
+**Interpretação das Cargas Rotacionadas (VARIMAX):**
 
-O índice de potência combina a contribuição de cada variável em todas as funções discriminantes.
+A rotação VARIMAX simplifica a estrutura, criando fatores mais interpretáveis:
+
+**Função 1 Rotacionada:**
+- **X6 (Product Quality)**: 1.000 - Carga perfeitamente concentrada
+- **X11 (Product Line)**: 0.538 - Contribuição moderada
+- **X17 (Price Flexibility)**: -0.462 - Contribuição negativa moderada
+
+**Interpretação**: LD1 rotacionada representa essencialmente a **"Dimensão de Qualidade"**, contrastando qualidade percebida com flexibilidade de preços.
+
+**Função 2 Rotacionada:**
+- **X18 (Delivery Speed)**: -0.992 - Concentração quase perfeita (negativa)
+- **X9 (Complaint Resolution)**: -0.836 - Alta correlação negativa  
+- **X16 (Ordering & Billing)**: -0.779 - Correlação negativa forte
+- **X11 (Product Line)**: -0.558 - Contribuição moderada
+- **X17 (Price Flexibility)**: -0.524 - Contribuição moderada
+
+**Interpretação**: LD2 rotacionada representa a **"Dimensão Operacional"**, focando em velocidade, eficiência e aspectos transacionais.
+
+**Vantagem da Rotação:**
+- **Simplifica interpretação**: Cada função tem foco mais claro
+- **Reduz ambiguidade**: Menos variáveis com cargas altas em múltiplas funções
+- **Facilita comunicação gerencial**: Dimensões mais intuitivas
+
+#### 5.3 Índice de Potência
 
 ```{r}
 # Calculando índice de potência conforme Hair et al.
@@ -813,9 +772,34 @@ if(ncol(cargas_discriminantes) > 1) {
 }
 ```
 
-#### 5.4 Razões F Univariadas
+**Interpretação do Índice de Potência:**
 
-As razões F univariadas mostram o poder discriminante individual de cada variável.
+O índice de potência combina a contribuição de cada variável em todas as funções, ponderada pela importância relativa de cada função:
+
+**Ranking por Poder Discriminante Total:**
+
+| Posição | Variável | Descrição | Índice | Interpretação |
+|---------|----------|-----------|--------|---------------|
+| 1º | X6 | Product Quality | 0.835 | **Discriminador principal** - fundamental para diferenciação |
+| 2º | X11 | Product Line | 0.293 | **Segundo mais importante** - variedade de produtos relevante |
+| 3º | X17 | Price Flexibility | 0.224 | **Terceiro lugar** - flexibilidade de preços diferencia grupos |
+| 4º | X18 | Delivery Speed | 0.176 | **Quarto lugar** - velocidade importante apesar de estar no modelo |
+| 5º | X9 | Complaint Resolution | 0.157 | **Moderadamente importante** - resolução de problemas diferencia |
+
+**Insights Principais:**
+
+1. **X6 (Product Quality)** é o discriminador dominante, responsável por mais de 83% do poder discriminante total
+2. **X18 (Delivery Speed)**, apesar de estar no modelo final, ocupa apenas a 4ª posição no índice de potência
+3. **X11 (Product Line)** aparece como segundo mais importante, sugerindo que variedade de produtos é crucial
+4. A **concentração de poder** nas primeiras variáveis indica que poucas dimensões explicam a maior parte da discriminação
+
+**Implicações Gerenciais:**
+- **Prioridade máxima**: Investir em qualidade do produto
+- **Segunda prioridade**: Expandir e melhorar linha de produtos
+- **Terceira prioridade**: Desenvolver flexibilidade de preços
+- **Monitoramento**: Acompanhar velocidade de entrega e resolução de reclamações
+
+#### 5.4 Razões F Univariadas
 
 ```{r}
 # Calculando razões F univariadas para cada variável
@@ -848,7 +832,45 @@ print("\nVariáveis Significativas (p < 0.05):")
 print(names(p_valores[p_valores < 0.05]))
 ```
 
-#### 6.2 Gráfico de Vetores de Atribuição no Espaço Discriminante
+**Interpretação das Razões F Univariadas:**
+
+**Ranking de Poder Discriminante Individual:**
+
+| Posição | Variável | F-value | p-valor | Status | Interpretação |
+|---------|----------|---------|---------|--------|---------------|
+| 1º | X18 (Delivery Speed) | 24.425 | < 0.001 | *** | **Melhor discriminador individual** |
+| 2º | X6 (Product Quality) | 22.885 | < 0.001 | *** | **Segundo melhor discriminador** |
+| 3º | X9 (Complaint Resolution) | 22.739 | < 0.001 | *** | **Terceiro em poder discriminante** |
+| 4º | X11 (Product Line) | 20.721 | < 0.001 | *** | **Quarto colocado significativo** |
+| 5º | X16 (Ordering & Billing) | 17.664 | < 0.001 | *** | **Quinto em importância** |
+
+**Variáveis Significativas (p < 0.05):** X6, X9, X11, X13, X16, X17, X18 (7 de 13 variáveis)
+
+**Comparação: Poder Individual vs. Poder Combinado:**
+
+1. **X18 (Delivery Speed)**: 
+   - Individual: 1º lugar (F = 24.425)
+   - Combinado: 4º lugar (Índice = 0.176)
+   - **Interpretação**: Excelente discriminador individual, mas com alguma redundância no modelo conjunto
+
+2. **X6 (Product Quality)**:
+   - Individual: 2º lugar (F = 22.885)  
+   - Combinado: 1º lugar (Índice = 0.835)
+   - **Interpretação**: Forte individual e dominante no modelo conjunto
+
+**Insights sobre Seleção de Variáveis:**
+
+- **Critério Hair et al.**: Usar X6 + X18 é justificado pelo alto poder discriminante individual de ambas
+- **Potencial de otimização**: X9 (Complaint Resolution) tem poder individual muito alto e poderia ser considerada
+- **Redundância**: Várias variáveis significativas sugerem multicolinearidade (confirmada pelos VIF altos)
+
+**Recomendações Gerenciais:**
+1. **Foco primário**: Delivery Speed e Product Quality (variáveis do modelo)
+2. **Foco secundário**: Complaint Resolution (alto poder discriminante individual)  
+3. **Monitoramento**: Product Line e Ordering & Billing (significativas e importantes)
+4. **Revisão**: Considerar modelo expandido incluindo X9 para melhor discriminação
+
+#### 5.5 Gráfico de Vetores de Atribuição no Espaço Discriminante
 
 ```{r}
 # Gráfico dos valores F univariados com descrições
@@ -918,6 +940,12 @@ p_vetores <- ggplot2::ggplot() +
   # Centróides dos grupos
   ggplot2::geom_point(data = df_centroides, ggplot2::aes(x = Funcao1, y = Funcao2), 
                       size = 6, shape = 17, color = "black") +
+  # LABELS DOS CENTRÓIDES - NOVO
+  ggplot2::geom_text(data = df_centroides, 
+                     ggplot2::aes(x = Funcao1, y = Funcao2, label = Grupo),
+                     vjust = -1.5, hjust = 0.5, color = "black", 
+                     fontface = "bold", size = 3.5,
+                     box.padding = 0.5) +
   # Vetores das variáveis
   ggplot2::geom_segment(data = vetores_df,
                         ggplot2::aes(x = LD1_start, y = LD2_start, 
@@ -938,7 +966,7 @@ p_vetores <- ggplot2::ggplot() +
   ggplot2::scale_size_continuous(range = c(0.5, 2), guide = "none") +
   ggplot2::labs(title = "Vetores de Atribuição das Variáveis no Espaço Discriminante",
                 subtitle = paste("Vetores mostram contribuição das variáveis para as funções discriminantes\n",
-                                "Escala dos vetores: ", escala_vetor, "x para melhor visualização"),
+                                "Triângulos pretos = centróides dos grupos | Escala dos vetores: ", escala_vetor, "x"),
                 x = paste("Função Discriminante 1 (", round(variancia_explicada[1], 1), "%)"),
                 y = paste("Função Discriminante 2 (", round(variancia_explicada[2], 1), "%)"),
                 color = "Variável\nSignificativa") +
@@ -949,95 +977,65 @@ p_vetores <- ggplot2::ggplot() +
 
 print(p_vetores)
 
+# IDENTIFICAÇÃO DOS GRUPOS DA VARIÁVEL DEPENDENTE
+cat("\n=== IDENTIFICAÇÃO DOS GRUPOS DA VARIÁVEL DEPENDENTE ===\n")
+cat("Variável Dependente: X1 (Customer Type)\n")
+cat("Descrição: Tempo de relacionamento com a empresa HBAT\n\n")
+
+# Grupos identificados no gráfico
+grupos_identificados <- levels(amostra_analise$X1)
+freq_grupos <- table(amostra_analise$X1)
+centroides_info <- centroides_discriminantes
+
+cat("GRUPOS REPRESENTADOS NO GRÁFICO:\n")
+for(i in 1:length(grupos_identificados)) {
+  grupo_nome <- grupos_identificados[i]
+  freq <- freq_grupos[i]
+  ld1_pos <- round(centroides_info[grupo_nome, "LD1"], 2)
+  ld2_pos <- round(centroides_info[grupo_nome, "LD2"], 2)
+  
+  cat(sprintf("🔺 GRUPO %d: %s\n", i, grupo_nome))
+  cat(sprintf("   - Frequência: %d casos (%.1f%%)\n", 
+              freq, (freq/sum(freq_grupos))*100))
+  cat(sprintf("   - Posição no gráfico: LD1 = %.2f, LD2 = %.2f\n", ld1_pos, ld2_pos))
+  cat(sprintf("   - Característica: %s\n", 
+              switch(i,
+                     "Clientes com relacionamento recente - percepções iniciais",
+                     "Clientes com relacionamento estabelecido - percepções moderadas", 
+                     "Clientes com relacionamento consolidado - percepções elevadas")))
+  cat("\n")
+}
+
+# Interpretação dos centróides no espaço discriminante
+cat("INTERPRETAÇÃO DOS CENTRÓIDES (TRIÂNGULOS PRETOS):\n")
+cat("- Os triângulos pretos representam o 'centro' de cada grupo no espaço discriminante\n")
+cat("- Sua posição indica as características médias de cada grupo\n")
+cat("- A distância entre centróides mostra o grau de separação entre grupos\n")
+
+# Análise das posições dos centróides
+cat("\nANÁLISE DAS POSIÇÕES:\n")
+for(i in 1:nrow(centroides_info)) {
+  grupo_nome <- rownames(centroides_info)[i]
+  ld1_val <- centroides_info[i, "LD1"]
+  ld2_val <- centroides_info[i, "LD2"]
+  
+  # Interpretação baseada na posição
+  interpretacao_ld1 <- ifelse(ld1_val > 0, "valores altos em LD1", "valores baixos em LD1")
+  interpretacao_ld2 <- ifelse(ld2_val > 0, "valores altos em LD2", "valores baixos em LD2")
+  
+  cat(sprintf("- %s: Caracterizado por %s e %s\n", 
+              grupo_nome, interpretacao_ld1, interpretacao_ld2))
+}
+
+cat("\nLEGENDA DO GRÁFICO:\n")
+cat("🔺 Triângulos pretos = Centróides dos grupos\n")
+cat("● Pontos coloridos = Observações individuais por grupo\n")
+cat("→ Vetores vermelhos = Variáveis significativas (p < 0.05)\n")
+cat("→ Vetores cinza = Variáveis não significativas\n")
+cat("📏 Comprimento do vetor = Magnitude da contribuição discriminante\n")
+
 # Interpretação dos vetores
 cat("\n=== INTERPRETAÇÃO DOS VETORES DE ATRIBUIÇÃO ===\n")
-cat("- Comprimento do vetor: indica a magnitude da contribuição da variável\n")
-cat("- Direção do vetor: mostra em qual direção a variável discrimina\n")
-cat("- Ângulo entre vetores: correlação entre variáveis\n")
-cat("- Vetores vermelhos: variáveis significativas (p < 0.05)\n")
-cat("- Vetores próximos aos centróides: discriminam bem esses grupos\n")
-
-# Análise dos vetores mais importantes com descrições
-vetores_ordenados <- vetores_df[order(vetores_df$Magnitude, decreasing = TRUE), ]
-cat("\nVetores mais importantes (maior magnitude):\n")
-for(i in 1:min(5, nrow(vetores_ordenados))) {
-  cat(sprintf("%d. %s (magnitude: %.3f)\n", 
-              i, vetores_ordenados$Variavel_Desc[i], vetores_ordenados$Magnitude[i]))
-}
-```
-
-#### 6.3 Mapa Territorial Avançado para Três Grupos
-
-```{r}
-# Mapa territorial básico
-p_mapa_basico <- ggplot2::ggplot(df_escores, ggplot2::aes(x = Funcao1, y = Funcao2, color = Grupo)) +
-  ggplot2::geom_point(size = 3, alpha = 0.7) +
-  ggplot2::stat_ellipse(level = 0.68, type = "norm", size = 1.2) +
-  ggplot2::geom_point(data = df_centroides, ggplot2::aes(x = Funcao1, y = Funcao2), 
-                      size = 8, shape = 17, color = "black") +
-  ggplot2::scale_color_brewer(type = "qual", palette = "Set1") +
-  ggplot2::labs(title = "Mapa Territorial Básico - Análise Discriminante",
-                subtitle = paste("Variância explicada: LD1 =", round(variancia_explicada[1], 1), 
-                                "%, LD2 =", round(variancia_explicada[2], 1), "%"),
-                x = paste("Função Discriminante 1 (", round(variancia_explicada[1], 1), "%)"),
-                y = paste("Função Discriminante 2 (", round(variancia_explicada[2], 1), "%)"),
-                color = "Grupo") +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(legend.position = "bottom",
-                 plot.title = ggplot2::element_text(size = 14, face = "bold"),
-                 plot.subtitle = ggplot2::element_text(size = 12))
-
-print(p_mapa_basico)
-
-# Mapa territorial avançado com fronteiras e contornos
-x_min <- min(df_escores$Funcao1) - 1
-x_max <- max(df_escores$Funcao1) + 1
-y_min <- min(df_escores$Funcao2) - 1
-y_max <- max(df_escores$Funcao2) + 1
-
-p_mapa_avancado <- ggplot2::ggplot() +
-  # Fundo com contornos de densidade
-  ggplot2::stat_density_2d_filled(data = df_escores, 
-                                   ggplot2::aes(x = Funcao1, y = Funcao2), 
-                                   alpha = 0.1, bins = 10) +
-  # Pontos dos grupos
-  ggplot2::geom_point(data = df_escores, 
-                      ggplot2::aes(x = Funcao1, y = Funcao2, color = Grupo, size = Probabilidades), 
-                      alpha = 0.8) +
-  # Elipses de confiança - 68% e 95%
-  ggplot2::stat_ellipse(data = df_escores, ggplot2::aes(x = Funcao1, y = Funcao2, color = Grupo), 
-                        level = 0.68, type = "norm", size = 1) +
-  ggplot2::stat_ellipse(data = df_escores, ggplot2::aes(x = Funcao1, y = Funcao2, color = Grupo), 
-                        level = 0.95, type = "norm", size = 0.5, linetype = "dashed") +
-  # Centróides
-  ggplot2::geom_point(data = df_centroides, ggplot2::aes(x = Funcao1, y = Funcao2), 
-                      size = 10, shape = 17, color = "black", stroke = 2) +
-  ggplot2::geom_text(data = df_centroides, ggplot2::aes(x = Funcao1, y = Funcao2, label = Grupo),
-                     vjust = -2, color = "black", fontface = "bold", size = 4) +
-  # Conectando centróides para mostrar relações
-  ggplot2::geom_path(data = df_centroides, ggplot2::aes(x = Funcao1, y = Funcao2),
-                     color = "black", linetype = "dotted", size = 0.8) +
-  # Eixos de referência
-  ggplot2::geom_hline(yintercept = 0, linetype = "solid", alpha = 0.3, color = "gray30") +
-  ggplot2::geom_vline(xintercept = 0, linetype = "solid", alpha = 0.3, color = "gray30") +
-  # Escalas e formatação
-  ggplot2::scale_color_brewer(type = "qual", palette = "Set1") +
-  ggplot2::scale_size_continuous(name = "Probabilidade\nClassificação", range = c(1, 4)) +
-  ggplot2::scale_fill_viridis_d(alpha = 0.1, guide = "none") +
-  ggplot2::labs(title = "Mapa Territorial Avançado - Análise Discriminante Três Grupos",
-                subtitle = paste("Elipses sólidas: 68% dos dados | Elipses tracejadas: 95% dos dados\n",
-                                "Triângulos: centróides dos grupos | Linha pontilhada: conecta centróides"),
-                x = paste("Função Discriminante 1 (", round(variancia_explicada[1], 1), "%)"),
-                y = paste("Função Discriminante 2 (", round(variancia_explicada[2], 1), "%)"),
-                color = "Grupo",
-                caption = "Contornos de fundo mostram densidade dos pontos") +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(legend.position = "right",
-                 plot.title = ggplot2::element_text(size = 14, face = "bold"),
-                 plot.subtitle = ggplot2::element_text(size = 10),
-                 panel.grid.minor = ggplot2::element_blank())
-
-print(p_mapa_avancado)
 ```
 
 #### 6.4 Análise das Distâncias entre Grupos
@@ -1081,10 +1079,6 @@ print(p_distancias)
 
 # Análise de separação
 dist_matrix_upper <- dist_centroides[upper.tri(dist_centroides)]
-cat("\n=== ANÁLISE DE SEPARAÇÃO ENTRE GRUPOS ===\n")
-cat("Distância média entre grupos:", round(mean(dist_matrix_upper), 3), "\n")
-cat("Distância mínima entre grupos:", round(min(dist_matrix_upper), 3), "\n")
-cat("Distância máxima entre grupos:", round(max(dist_matrix_upper), 3), "\n")
 
 # Identificando grupos mais próximos e mais distantes
 dist_indices <- which(dist_centroides == min(dist_matrix_upper), arr.ind = TRUE)[1, ]
@@ -1094,10 +1088,37 @@ grupos_proximos <- c(rownames(dist_centroides)[dist_indices[1]],
 dist_indices_max <- which(dist_centroides == max(dist_matrix_upper), arr.ind = TRUE)[1, ]
 grupos_distantes <- c(rownames(dist_centroides)[dist_indices_max[1]], 
                      colnames(dist_centroides)[dist_indices_max[2]])
-
-cat("Grupos mais próximos:", grupos_proximos[1], "e", grupos_proximos[2], "\n")
-cat("Grupos mais distantes:", grupos_distantes[1], "e", grupos_distantes[2], "\n")
 ```
+
+**Interpretação da Análise de Distâncias:**
+
+**Matriz de Distâncias Euclidianas:**
+- **Menor distância**: "De 1 a 5 anos" ↔ "Mais de 5 anos" (1.737)
+- **Maior distância**: "Menos de 1 ano" ↔ "Mais de 5 anos" (3.084)
+- **Distância intermediária**: "Menos de 1 ano" ↔ "De 1 a 5 anos" (2.127)
+
+**Padrões de Similaridade:**
+
+1. **Grupos Intermediário e Maduro são mais próximos**: 
+   - Distância de apenas 1.737 unidades
+   - **Interpretação**: Após 1 ano, as percepções começam a convergir
+   - **Implicação**: O primeiro ano é crítico para formar percepções duradouras
+
+2. **Clientes Novos são mais distantes de todos**:
+   - Maior distância dos clientes maduros (3.084)
+   - **Interpretação**: Período inicial tem características muito distintas
+   - **Implicação**: Estratégias específicas necessárias para novos clientes
+
+3. **Progressão Não-Linear**:
+   - A evolução "Novo → Intermediário → Maduro" não é uniforme
+   - Maior salto entre "Novo" e "Intermediário" (2.127)
+   - Menor progressão entre "Intermediário" e "Maduro" (1.737)
+
+**Insights Gerenciais:**
+
+- **Período Crítico**: Os primeiros 12 meses são fundamentais para retenção
+- **Convergência**: Após 1 ano, clientes tendem a desenvolver percepções similares
+- **Segmentação**: Dois grandes segmentos emergem: "Novos" vs. "Estabelecidos" (intermediários + maduros)
 
 #### 6.5 Comparação Visual: Espaço Original vs. Espaço Discriminante
 
@@ -1143,6 +1164,7 @@ comparacao <- gridExtra::grid.arrange(
 
 print(comparacao)
 
+# Interpretação da comparação
 cat("\n=== INTERPRETAÇÃO DA COMPARAÇÃO ===\n")
 cat("- Espaço Original: mostra sobreposição entre grupos\n")
 cat("- Espaço Discriminante: maximiza separação entre grupos\n")
@@ -1165,7 +1187,6 @@ print(matriz_confusao_analise)
 
 # Taxa de acerto geral
 acerto_geral_analise <- sum(diag(matriz_confusao_analise)) / sum(matriz_confusao_analise)
-cat("\nTaxa de Acerto Geral (Análise):", round(acerto_geral_analise * 100, 1), "%\n")
 
 # Taxa de acerto por grupo
 acerto_por_grupo_analise <- diag(matriz_confusao_analise) / rowSums(matriz_confusao_analise)
@@ -1188,6 +1209,17 @@ p_matriz_conf <- ggplot2::ggplot(matriz_conf_df, ggplot2::aes(x = Real, y = Pred
                  axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
 
 print(p_matriz_conf)
+```
+
+**Taxa de Acerto Geral (Análise)**: `r round(acerto_geral_analise * 100, 1)`%
+
+**Taxa de Acerto por Grupo (Análise)**:
+```{r}
+#| echo: false
+knitr::kable(data.frame(
+  Grupo = names(acerto_por_grupo_analise),
+  `Taxa de Acerto (%)` = round(acerto_por_grupo_analise * 100, 1)
+), row.names = FALSE)
 ```
 
 #### 6.7 Validação Cruzada
@@ -1220,8 +1252,9 @@ print(matriz_confusao_cv)
 
 # Taxa de acerto validação cruzada
 acerto_geral_cv <- sum(diag(matriz_confusao_cv)) / sum(matriz_confusao_cv)
-cat("\nTaxa de Acerto Geral (Validação Cruzada):", round(acerto_geral_cv * 100, 1), "%\n")
 ```
+
+**Taxa de Acerto Geral (Validação Cruzada)**: `r round(acerto_geral_cv * 100, 1)`%
 
 #### 6.8 Validação Externa
 
@@ -1236,13 +1269,14 @@ print(matriz_confusao_validacao)
 
 # Taxa de acerto amostra de validação
 acerto_geral_validacao <- sum(diag(matriz_confusao_validacao)) / sum(matriz_confusao_validacao)
-cat("\nTaxa de Acerto Geral (Validação):", round(acerto_geral_validacao * 100, 1), "%\n")
 
 # Taxa de acerto por grupo
 acerto_por_grupo_validacao <- diag(matriz_confusao_validacao) / rowSums(matriz_confusao_validacao)
 print("Taxa de Acerto por Grupo (Validação):")
 print(round(acerto_por_grupo_validacao * 100, 1))
 ```
+
+**Taxa de Acerto Geral (Validação)**: `r round(acerto_geral_validacao * 100, 1)`%
 
 #### 6.9 Critérios de Chance
 
@@ -1256,15 +1290,6 @@ criterio_chance_proporcional <- sum(proporcoes_grupos^2) * 100
 
 # Critério de chance máxima
 criterio_chance_maxima <- max(proporcoes_grupos) * 100
-
-cat("Critério de Chance Proporcional:", round(criterio_chance_proporcional, 1), "%\n")
-cat("Critério de Chance Máxima:", round(criterio_chance_maxima, 1), "%\n")
-
-# Comparando com resultados obtidos
-cat("\nComparação com Resultados Obtidos:\n")
-cat("Taxa de Acerto Análise:", round(acerto_geral_analise * 100, 1), "% vs Critério Proporcional:", round(criterio_chance_proporcional, 1), "%\n")
-cat("Taxa de Acerto Validação Cruzada:", round(acerto_geral_cv * 100, 1), "% vs Critério Proporcional:", round(criterio_chance_proporcional, 1), "%\n")
-cat("Taxa de Acerto Validação:", round(acerto_geral_validacao * 100, 1), "% vs Critério Proporcional:", round(criterio_chance_proporcional, 1), "%\n")
 
 # Gráfico de comparação das taxas de acerto
 taxas_acerto <- data.frame(
@@ -1296,15 +1321,26 @@ p_performance <- ggplot2::ggplot(taxas_acerto, ggplot2::aes(x = reorder(Metodo, 
 print(p_performance)
 ```
 
+**Critérios de Chance:**
+
+- **Critério de Chance Proporcional**: `r round(criterio_chance_proporcional, 1)`%
+- **Critério de Chance Máxima**: `r round(criterio_chance_maxima, 1)`%
+
+**Comparação com Resultados Obtidos:**
+
+- Taxa de Acerto Análise: `r round(acerto_geral_analise * 100, 1)`% vs Critério Proporcional: `r round(criterio_chance_proporcional, 1)`%
+- Taxa de Acerto Validação Cruzada: `r round(acerto_geral_cv * 100, 1)`% vs Critério Proporcional: `r round(criterio_chance_proporcional, 1)`%  
+- Taxa de Acerto Validação: `r round(acerto_geral_validacao * 100, 1)`% vs Critério Proporcional: `r round(criterio_chance_proporcional, 1)`%
+
 ### Resumo da Interpretação Gerencial
 
-Os resultados da análise discriminante revelam insights importantes sobre a diferenciação de clientes baseada no tempo de relacionamento. Com `r nrow(hbat_clean)` observações analisadas, identificamos que de `r length(variaveis_independentes)` variáveis independentes testadas, apenas 2 foram suficientes para uma discriminação efetiva.
+Os resultados da análise discriminante revelam insights importantes sobre a diferenciação de clientes baseada no tempo de relacionamento. Com o dataset completo analisado, identificamos que de 13 variáveis independentes testadas, apenas 2 foram suficientes para uma discriminação efetiva.
 
 #### Principais Descobertas:
 
-1. **Variáveis Discriminantes**: X6 (Qualidade do Produto) e X18 (Velocidade de Entrega) são os principais diferenciadores, representando `r round(sum(variancia_explicada), 1)`% da variância discriminante total.
+1. **Variáveis Discriminantes**: X6 (Product Quality) e X18 (Delivery Speed) são os principais diferenciadores, representando aproximadamente 100% da variância discriminante total.
 
-2. **Precisão do Modelo**: O modelo alcança `r round(acerto_geral_analise * 100, 1)`% de acertos na amostra de análise, superando significativamente o critério de chance de `r round(criterio_chance_proporcional, 1)`%.
+2. **Precisão do Modelo**: O modelo alcança alta taxa de acertos na amostra de análise, superando significativamente os critérios de chance.
 
 3. **Diferenças entre Grupos**: 
    - **Clientes novos** (< 1 ano): Menores percepções de qualidade e velocidade
@@ -1315,7 +1351,7 @@ Os resultados da análise discriminante revelam insights importantes sobre a dif
 
 - **Foco na Qualidade**: Investir na melhoria da qualidade do produto é fundamental para reter clientes
 - **Otimização de Entregas**: A velocidade de entrega é um diferencial competitivo crítico
-- **Segmentação**: Os `r nlevels(hbat_clean$X1)` grupos identificados requerem estratégias diferenciadas
+- **Segmentação**: Os 3 grupos identificados requerem estratégias diferenciadas
 
 ```{r}
 # Médias dos grupos para interpretação
@@ -1355,8 +1391,7 @@ if(exists("modelo_stepwise")) {
 }
 
 cat("\n=== CONCLUSÕES GERENCIAIS ===\n")
-cat("1. A qualidade do produto (X6) e velocidade de entrega (X18) são os principais\n")
-cat("   diferenciadores entre os grupos de clientes.\n")
+cat("1. A qualidade do produto (X6) e velocidade de entrega (X18) são os principais diferenciadores entre os grupos de clientes.\n")
 cat("2. O modelo consegue discriminar bem entre os três grupos de tempo de relacionamento.\n")
 cat("3. Clientes de longo prazo valorizam mais qualidade e velocidade de entrega.\n")
 cat("4. Ações de melhoria devem focar nestas duas dimensões para reter clientes.\n")
@@ -1364,33 +1399,29 @@ cat("4. Ações de melhoria devem focar nestas duas dimensões para reter client
 
 **Análise das Médias por Grupo:**
 
-Os resultados mostram um padrão claro de evolução das percepções com o tempo de relacionamento:
-
-1. **X6 (Product Quality)**: Evolução progressiva de `r round(medias_grupos_numericas[1,1], 2)` (< 1 ano) para `r round(medias_grupos_numericas[3,1], 2)` (> 5 anos)
-2. **X18 (Delivery Speed)**: Melhoria significativa de `r round(medias_grupos_numericas[1,13], 2)` para `r round(medias_grupos_numericas[3,13], 2)`
-3. **Variáveis mais discriminantes**: As percepções de qualidade e velocidade mostram diferenças significativas entre grupos
-
-### Insights das Visualizações
-
-As visualizações revelam padrões importantes:
-
-1. **Separação Clara dos Grupos**: O mapa territorial mostra que os grupos são bem separados no espaço discriminante
-2. **Evolução Progressiva**: Os boxplots mostram uma progressão clara nas percepções conforme aumenta o tempo de relacionamento
-3. **Multicolinearidade Visível**: A matriz de correlação e o gráfico VIF confirmam problemas de multicolinearidade em algumas variáveis
-4. **Performance Consistente**: As taxas de acerto são consistentes entre análise, validação cruzada e validação externa
-5. **Variáveis Dominantes**: X6 e X18 claramente dominam a discriminação entre grupos
+Os resultados mostram um padrão claro de evolução das percepções com o tempo de relacionamento, com melhorias progressivas nas percepções de qualidade e velocidade de entrega conforme aumenta o tempo de relacionamento com a empresa.
 
 ### Apêndice: Informações Técnicas do Dataset
 
 #### Características do Dataset HBAT
 
-- **Total de observações**: `r nrow(hbat_clean)`
-- **Variáveis independentes analisadas**: `r length(variaveis_independentes)`
-- **Grupos da variável dependente**: `r nlevels(hbat_clean$X1)`
-- **Distribuição dos grupos**:
-  - Menos de 1 ano: `r table(hbat_clean$X1)[1]` casos (`r round(prop.table(table(hbat_clean$X1))[1] * 100, 1)`%)
-  - De 1 a 5 anos: `r table(hbat_clean$X1)[2]` casos (`r round(prop.table(table(hbat_clean$X1))[2] * 100, 1)`%)
-  - Mais de 5 anos: `r table(hbat_clean$X1)[3]` casos (`r round(prop.table(table(hbat_clean$X1))[3] * 100, 1)`%)
+```{r}
+# Informações sobre o dataset após limpeza
+cat("=== CARACTERÍSTICAS DO DATASET FINAL ===\n")
+cat("Total de observações:", nrow(hbat_clean), "\n")
+cat("Variáveis independentes analisadas:", length(variaveis_independentes), "\n")
+cat("Grupos da variável dependente:", nlevels(hbat_clean$X1), "\n")
+
+# Distribuição dos grupos
+dist_grupos <- table(hbat_clean$X1)
+prop_grupos <- prop.table(dist_grupos) * 100
+
+cat("\nDistribuição dos grupos:\n")
+for(i in 1:length(dist_grupos)) {
+  cat("- ", names(dist_grupos)[i], ": ", dist_grupos[i], " casos (", 
+      round(prop_grupos[i], 1), "%)\n", sep = "")
+}
+```
 
 #### Qualidade dos Dados
 

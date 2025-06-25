@@ -10,5 +10,9 @@
   },
   "book/book.md": {
     "book.html": "c19d5b46"
+  },
+  "logit_probit.qmd": {
+    "logit_probit.html": "9505ec83",
+    "logit_probit.tex": "32c15a5b"
   }
 }
