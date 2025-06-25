@@ -619,12 +619,7 @@ Os resultados sugerem pontos importantes para políticas de participação femin
 3. **Variáveis omitidas**: Outros fatores importantes podem não estar incluídos (atitudes sociais, disponibilidade de emprego, etc.)
 4. **Causalidade**: As relações estimadas são associações, não necessariamente causais
 
-### Próximos Passos
 
-Para futuras pesquisas, sugere-se:
-1. **Atualização dos dados** para períodos mais recentes
-2. **Inclusão de variáveis adicionais** (atitudes, normas sociais)
-3. **Análise por subgrupos** (idade, educação, região)
-4. **Modelos de efeitos fixos** para controlar heterogeneidade não observada
+
 
 
