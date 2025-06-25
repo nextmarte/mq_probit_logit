@@ -251,6 +251,10 @@ $$\frac{\delta \Lambda(X'\beta)}{\delta(X'\beta)} = \frac{d\Lambda(X'\beta)}{d(X
 
 onde $\Lambda(X'\beta) = \frac{e^{X'\beta}}{1+e^{X'\beta}}$
 
+### Interpretação das Fórmulas
+
+Os **efeitos marginais** representam a variação na probabilidade de ocorrência do evento (Y=1) quando uma variável explicativa aumenta em uma unidade, mantendo todas as outras constantes. No modelo **Probit**, o efeito marginal é o produto da densidade da distribuição normal padrão avaliada em $X'\beta$ pelo respectivo coeficiente $\beta$. Já no modelo **Logit**, o efeito marginal é calculado através da derivada parcial da função logística, que resulta em $\Lambda(X'\beta) \cdot [1-\Lambda(X'\beta)] \cdot \beta$. Em ambos os casos, os efeitos marginais variam conforme os valores das variáveis explicativas, sendo tipicamente avaliados na média amostral para facilitar a interpretação. Isso explica por que os coeficientes dos modelos não podem ser interpretados diretamente como no modelo linear - eles precisam ser transformados através dessas fórmulas para obtermos o impacto real em termos de pontos percentuais na probabilidade.
+
 ```{r marginal-effects}
 # Efeitos marginais - Logit
 logit.mfx <- logitmfx(inlf ~ nwifeinc + educ + exper + expersq + age + kidslt6 + kidsge6,

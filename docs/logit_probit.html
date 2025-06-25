@@ -212,6 +212,7 @@ window.Quarto = {
   <li><a href="#efeitos-marginais" id="toc-efeitos-marginais" class="nav-link" data-scroll-target="#efeitos-marginais">Efeitos Marginais</a>
   <ul class="collapse">
   <li><a href="#fórmulas-teóricas" id="toc-fórmulas-teóricas" class="nav-link" data-scroll-target="#fórmulas-teóricas">Fórmulas Teóricas</a></li>
+  <li><a href="#interpretação-das-fórmulas" id="toc-interpretação-das-fórmulas" class="nav-link" data-scroll-target="#interpretação-das-fórmulas">Interpretação das Fórmulas</a></li>
   <li><a href="#interpretação-dos-efeitos-marginais" id="toc-interpretação-dos-efeitos-marginais" class="nav-link" data-scroll-target="#interpretação-dos-efeitos-marginais">Interpretação dos Efeitos Marginais</a></li>
   </ul></li>
   <li><a href="#qualidade-da-previsão" id="toc-qualidade-da-previsão" class="nav-link" data-scroll-target="#qualidade-da-previsão">Qualidade da Previsão</a>
@@ -826,6 +827,10 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <p>onde <span class="math inline">\(\Phi(z) = \frac{1}{\sqrt{2\pi}}e^{-\frac{z^2}{2}}\)</span> e <span class="math inline">\(Z \sim N(0,1)\)</span></p>
 <p><strong>Logit:</strong> <span class="math display">\[\frac{\delta \Lambda(X'\beta)}{\delta(X'\beta)} = \frac{d\Lambda(X'\beta)}{d(X'\beta)} \cdot \frac{d(X'\beta)}{dX}\]</span></p>
 <p>onde <span class="math inline">\(\Lambda(X'\beta) = \frac{e^{X'\beta}}{1+e^{X'\beta}}\)</span></p>
+</section>
+<section id="interpretação-das-fórmulas" class="level3">
+<h3 class="anchored" data-anchor-id="interpretação-das-fórmulas">Interpretação das Fórmulas</h3>
+<p>Os <strong>efeitos marginais</strong> representam a variação na probabilidade de ocorrência do evento (Y=1) quando uma variável explicativa aumenta em uma unidade, mantendo todas as outras constantes. No modelo <strong>Probit</strong>, o efeito marginal é o produto da densidade da distribuição normal padrão avaliada em <span class="math inline">\(X'\beta\)</span> pelo respectivo coeficiente <span class="math inline">\(\beta\)</span>. Já no modelo <strong>Logit</strong>, o efeito marginal é calculado através da derivada parcial da função logística, que resulta em <span class="math inline">\(\Lambda(X'\beta) \cdot [1-\Lambda(X'\beta)] \cdot \beta\)</span>. Em ambos os casos, os efeitos marginais variam conforme os valores das variáveis explicativas, sendo tipicamente avaliados na média amostral para facilitar a interpretação. Isso explica por que os coeficientes dos modelos não podem ser interpretados diretamente como no modelo linear - eles precisam ser transformados através dessas fórmulas para obtermos o impacto real em termos de pontos percentuais na probabilidade.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Código</summary>
