@@ -77,9 +77,13 @@ library(RColorBrewer)
 
 ## Análise Discriminante - Exemplo HBAT
 
+
 ### Reprodução do Exemplo de Hair et al. - Dataset HBAT
 
 Nesta seção, reproduziremos a análise discriminante apresentada no livro Hair et al., utilizando o dataset HBAT para classificar clientes em três grupos baseados no tempo de relacionamento com a empresa.
+
+
+O **HBAT** é um dataset educacional fictício amplamente utilizado no livro clássico "Multivariate Data Analysis" de Joseph Hair et al., representando uma empresa de distribuição industrial. O dataset contém **100 observações** de clientes classificados em três grupos baseados no tempo de relacionamento: **Grupo 1** (menos de 1 ano), **Grupo 2** (1 a 5 anos) e **Grupo 3** (mais de 5 anos). As variáveis incluem a **variável dependente X1** (Customer Type) e **13 variáveis independentes** (X6-X18) que medem percepções dos clientes sobre diferentes aspectos da empresa, como qualidade do produto (X6), atividades de e-commerce (X7), suporte técnico (X8), resolução de reclamações (X9), propaganda (X10), linha de produtos (X11), imagem da força de vendas (X12), preços competitivos (X13), garantia e reclamações (X14), novos produtos (X15), pedidos e faturamento (X16), flexibilidade de preços (X17) e velocidade de entrega (X18). Todas as variáveis independentes utilizam uma **escala de 0-10**, facilitando comparações e interpretações. Este dataset é ideal para demonstrar técnicas de análise multivariada, especialmente análise discriminante, pois oferece um contexto empresarial realista com dados limpos e estruturados, permitindo focar na aplicação das técnicas estatísticas sem se preocupar com problemas complexos de qualidade de dados típicos de datasets reais.
 
 ### Estágio 1: Objetivos da Análise Discriminante
 
