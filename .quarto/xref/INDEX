@@ -4,5 +4,11 @@
   },
   "index.qmd": {
     "index.html": "54c61f66"
+  },
+  "data/churn.md": {
+    "churn.html": "74a71410"
+  },
+  "book/book.md": {
+    "book.html": "c19d5b46"
   }
 }
